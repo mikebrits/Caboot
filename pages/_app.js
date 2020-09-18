@@ -2,7 +2,7 @@ import React from 'react';
 import { Grommet } from 'grommet';
 import Head from 'next/head';
 import '../styles/globals.css';
-import { UserProvider } from '../helpers/UserContext';
+import { UserProvider } from '../src/helpers/UserContext';
 
 const theme = {
     global: {

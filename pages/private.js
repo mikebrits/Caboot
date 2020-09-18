@@ -1,5 +1,5 @@
 import React from 'react';
-import { requiresAuth } from '../helpers/withAuth';
+import { requiresAuth } from '../src/helpers/withAuth';
 
 const Private = ({ user }) => {
     return (

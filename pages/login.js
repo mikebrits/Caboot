@@ -2,8 +2,9 @@ import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import React from 'react';
 import * as firebase from 'firebase';
 import { auth } from '../src/config/firebase';
-import { useUser } from '../helpers/UserContext';
-import { Button } from 'grommet';
+import { useUser } from '../src/helpers/UserContext';
+import { Box, Button, Card } from 'grommet';
+import { Page } from '../src/components/Page';
 
 const uiConfig = {
     // Popup signin flow rather than redirect flow.
@@ -18,17 +19,26 @@ export default function Login() {
     const { user } = useUser();
     if (user) {
         return (
-            <>
+            <Page>
                 <p>You are already signed in!</p>
                 <Button primary label="Sign Out" onClick={() => auth.signOut()} />
-            </>
+            </Page>
         );
     }
     return (
-        <div>
-            <h1>My App</h1>
-            <p>Please sign-in:</p>
-            <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />
-        </div>
+        <Page>
+            <Box pad="medium" align="center">
+                <Card
+                    height="small"
+                    width="medium"
+                    background="light-1"
+                    pad="medium"
+                    align={'center'}
+                >
+                    <h2>Please sign-in:</h2>
+                    <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />
+                </Card>
+            </Box>
+        </Page>
     );
 }

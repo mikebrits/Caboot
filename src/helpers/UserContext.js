@@ -1,5 +1,5 @@
 import React, { useContext, createContext, useState, useEffect } from 'react';
-import { auth } from '../src/config/firebase';
+import { auth } from '../config/firebase';
 
 const UserContext = createContext(null);
 
@@ -19,5 +19,9 @@ export const UserProvider = ({ children }) => {
         });
     }, []);
     if (loading) return <>Loading...</>;
-    return <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>;
+    return (
+        <UserContext.Provider value={{ user, signOut: auth.signOut }}>
+            {children}
+        </UserContext.Provider>
+    );
 };
