@@ -1,0 +1,45 @@
+[debug] [2020-09-18T19:28:10.809Z] ----------------------------------------------------------------------
+[debug] [2020-09-18T19:28:10.811Z] Command:       /Users/MikeBrits/.nvm/versions/node/v10.22.1/bin/node /usr/local/bin/firebase deploy --only functions
+[debug] [2020-09-18T19:28:10.811Z] CLI Version:   7.0.2
+[debug] [2020-09-18T19:28:10.811Z] Platform:      darwin
+[debug] [2020-09-18T19:28:10.811Z] Node Version:  v10.22.1
+[debug] [2020-09-18T19:28:10.812Z] Time:          Fri Sep 18 2020 20:28:10 GMT+0100 (British Summer Time)
+[debug] [2020-09-18T19:28:10.812Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2020-09-18T19:28:10.819Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2020-09-18T19:28:10.819Z] > authorizing via signed-in user
+[debug] [2020-09-18T19:28:10.819Z] [iam] checking project caboot for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2020-09-18T19:28:10.820Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/caboot:testIamPermissions  
+
+[debug] [2020-09-18T19:28:11.766Z] <<< HTTP RESPONSE 200
+[debug] [2020-09-18T19:28:13.134Z] TypeError: Cannot read property 'wanted' of undefined
+    at /usr/local/lib/node_modules/firebase-tools/lib/checkFirebaseSDKVersion.js:37:51
+    at process._tickCallback (internal/process/next_tick.js:68:7)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2020-09-18T19:34:49.605Z] ----------------------------------------------------------------------
+[debug] [2020-09-18T19:34:49.607Z] Command:       /Users/MikeBrits/.nvm/versions/node/v8.17.0/bin/node /Users/MikeBrits/.nvm/versions/node/v8.17.0/bin/firebase deploy --only functions
+[debug] [2020-09-18T19:34:49.607Z] CLI Version:   8.10.0
+[debug] [2020-09-18T19:34:49.607Z] Platform:      darwin
+[debug] [2020-09-18T19:34:49.607Z] Node Version:  v8.17.0
+[debug] [2020-09-18T19:34:49.607Z] Time:          Fri Sep 18 2020 20:34:49 GMT+0100 (BST)
+[debug] [2020-09-18T19:34:49.608Z] ----------------------------------------------------------------------
+[debug] [2020-09-18T19:34:49.608Z] 
+[debug] [2020-09-18T19:34:49.614Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2020-09-18T19:34:49.614Z] > authorizing via signed-in user
+[debug] [2020-09-18T19:34:49.614Z] [iam] checking project caboot for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2020-09-18T19:34:49.616Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2020-09-18T19:34:49.616Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2020-09-18T19:34:49.967Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=utf-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Fri, 18 Sep 2020 19:34:49 GMT","server":"scaffolding on HTTPServer2","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-Q050=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-27=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-T050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-09-18T19:34:49.983Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/caboot:testIamPermissions  
+ {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2020-09-18T19:34:50.865Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Fri, 18 Sep 2020 19:34:50 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","server-timing":"gfet4t7; dur=589","alt-svc":"h3-Q050=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-27=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-T050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-09-18T19:34:50.866Z] >>> HTTP REQUEST POST https://iam.googleapis.com/v1/projects/caboot/serviceAccounts/caboot@appspot.gserviceaccount.com:testIamPermissions  
+ {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2020-09-18T19:34:51.258Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Fri, 18 Sep 2020 19:34:51 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-Q050=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-27=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-T050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[info] 
+[info] === Deploying to 'caboot'...
+[info] 
+[info] i  deploying functions 
+[info] Running command: npm --prefix "$RESOURCE_DIR" run lint
