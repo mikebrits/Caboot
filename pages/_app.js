@@ -1,32 +1,27 @@
 import React from 'react';
-import { Grommet } from 'grommet';
 import Head from 'next/head';
 import '../styles/globals.css';
+import 'react-toastify/dist/ReactToastify.css';
 import { UserProvider } from '../src/helpers/UserContext';
-
-const theme = {
-    global: {
-        font: {
-            family: 'Roboto',
-            size: '14px',
-            height: '20px',
-        },
-    },
-};
+import { ToastContainer } from 'react-toastify';
 
 export default function App({ Component, pageProps }) {
     return (
-        <Grommet theme={theme}>
-            <UserProvider>
-                <Head>
-                    <title>Caboot</title>
-                    <link
-                        href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
-                        rel="stylesheet"
-                    />
-                </Head>
-                <Component {...pageProps} />
-            </UserProvider>
-        </Grommet>
+        <UserProvider>
+            <Head>
+                <title>Caboot</title>
+            </Head>
+            <Component {...pageProps} />
+            <ToastContainer
+                position="bottom-center"
+                autoClose={1500}
+                hideProgressBar
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                pauseOnHover
+            />
+        </UserProvider>
     );
 }

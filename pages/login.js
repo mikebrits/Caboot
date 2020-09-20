@@ -3,8 +3,10 @@ import React from 'react';
 import * as firebase from 'firebase';
 import { auth } from '../src/config/firebase';
 import { useUser } from '../src/helpers/UserContext';
-import { Box, Button, Card } from 'grommet';
 import { Page } from '../src/components/Page';
+import { CardContent } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import Card from '@material-ui/core/Card';
 
 const uiConfig = {
     // Popup signin flow rather than redirect flow.
@@ -20,25 +22,20 @@ export default function Login() {
     if (user) {
         return (
             <Page>
-                <p>You are already signed in!</p>
-                <Button primary label="Sign Out" onClick={() => auth.signOut()} />
+                <Button variant="contained" onClick={() => auth.signOut()}>
+                    Sign Out
+                </Button>
             </Page>
         );
     }
     return (
         <Page>
-            <Box pad="medium" align="center">
-                <Card
-                    height="small"
-                    width="medium"
-                    background="light-1"
-                    pad="medium"
-                    align={'center'}
-                >
+            <Card variant="outlined">
+                <CardContent>
                     <h2>Please sign-in:</h2>
                     <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />
-                </Card>
-            </Box>
+                </CardContent>
+            </Card>
         </Page>
     );
 }

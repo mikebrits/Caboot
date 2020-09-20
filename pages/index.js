@@ -1,6 +1,5 @@
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
-import { Heading } from 'grommet';
 import { Page } from '../src/components/Page';
 
 export default function Home() {
@@ -13,8 +12,6 @@ export default function Home() {
                 </Head>
 
                 <main className={styles.main}>
-                    <Heading level={1}>Welcome to Caboot</Heading>
-
                     <p className={styles.description}>
                         Get started by editing <code className={styles.code}>pages/index.js</code>
                     </p>
