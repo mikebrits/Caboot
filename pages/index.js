@@ -1,60 +1,71 @@
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import { Page } from '../src/components/Page';
+import React, { useState } from 'react';
+import Paper from '@material-ui/core/Paper';
+import IconButton from '@material-ui/core/IconButton';
+import InputBase from '@material-ui/core/InputBase';
+import { BsPlay } from 'react-icons/bs';
+import makeStyles from '@material-ui/core/styles/makeStyles';
+import { useRouter } from 'next/router';
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        padding: '2px 4px',
+        display: 'flex',
+        alignItems: 'center',
+        width: 400,
+    },
+    input: {
+        marginLeft: theme.spacing(1),
+        flex: 1,
+    },
+    iconButton: {
+        padding: 10,
+    },
+    divider: {
+        height: 28,
+        margin: 4,
+    },
+}));
 
 export default function Home() {
+    const classes = useStyles();
+    const [pin, setPin] = useState('');
+    const router = useRouter();
+    const handleSubmit = () => {
+        router.push(`/play/${pin.trim()}`);
+    };
     return (
         <Page>
-            <div className={styles.container}>
+            <div>
                 <Head>
                     <title>Caboot</title>
                     <link rel="icon" href="/favicon.ico" />
                 </Head>
 
-                <main className={styles.main}>
-                    <p className={styles.description}>
-                        Get started by editing <code className={styles.code}>pages/index.js</code>
-                    </p>
-
-                    <div className={styles.grid}>
-                        <a href="https://nextjs.org/docs" className={styles.card}>
-                            <h3>Documentation &rarr;</h3>
-                            <p>Find in-depth information about Next.js features and API.</p>
-                        </a>
-
-                        <a href="https://nextjs.org/learn" className={styles.card}>
-                            <h3>Learn &rarr;</h3>
-                            <p>Learn about Next.js in an interactive course with quizzes!</p>
-                        </a>
-
-                        <a
-                            href="https://github.com/vercel/next.js/tree/master/examples"
-                            className={styles.card}
-                        >
-                            <h3>Examples &rarr;</h3>
-                            <p>Discover and deploy boilerplate example Next.js projects.</p>
-                        </a>
-
-                        <a
-                            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-                            className={styles.card}
-                        >
-                            <h3>Deploy &rarr;</h3>
-                            <p>Instantly deploy your Next.js site to a public URL with Vercel.</p>
-                        </a>
-                    </div>
-                </main>
-
-                <footer className={styles.footer}>
-                    <a
-                        href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        Powered by{' '}
-                        <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-                    </a>
-                </footer>
+                <h1>Welcome to Caboot</h1>
+                <Paper
+                    component="form"
+                    className={classes.root}
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        handleSubmit();
+                    }}
+                >
+                    <InputBase
+                        className={classes.input}
+                        placeholder="Enter Game Pin"
+                        inputProps={{ 'aria-label': 'Enter Game Pin' }}
+                        onChange={(e) => {
+                            setPin(e.currentTarget.value);
+                        }}
+                        value={pin}
+                    />
+                    <IconButton type="submit" className={classes.iconButton} aria-label="search">
+                        <BsPlay />
+                    </IconButton>
+                </Paper>
             </div>
         </Page>
     );

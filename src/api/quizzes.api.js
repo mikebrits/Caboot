@@ -1,6 +1,7 @@
 import { db } from '../config/firebase';
 import { useDoc, useRealtimeCollection } from './query';
 import { useUser } from '../helpers/UserContext';
+import { createActiveQuiz, endActiveQuiz } from './activeQuiz.api';
 
 export const userRef = (id) => db.collection('users').doc(id);
 export const quizCollectionRef = (userId) => userRef(userId).collection('quizzes');
@@ -76,6 +77,32 @@ export const useDeleteQuiz = () => {
     const { user } = useUser();
     return async (quizId) => {
         return await quizRef(user.uid, quizId).delete();
+    };
+};
+
+export const useStartQuiz = () => {
+    const { user } = useUser();
+    return async (quiz) => {
+        const activeQuiz = await createActiveQuiz({
+            owner: user.uid,
+            quiz: quiz.id,
+            title: quiz.title,
+        });
+        await quizRef(user.uid, quiz.id).update({
+            activeQuiz: activeQuiz.id,
+            status: 'IN_PROGRESS',
+        });
+    };
+};
+
+export const useStopQuiz = () => {
+    const { user } = useUser();
+    return async (quiz) => {
+        await endActiveQuiz(quiz.activeQuiz);
+        await quizRef(user.uid, quiz.id).update({
+            status: 'WAITING',
+            activeQuiz: '',
+        });
     };
 };
 

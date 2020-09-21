@@ -1,6 +1,5 @@
 import React, { useContext, createContext, useState, useEffect } from 'react';
 import { auth } from '../config/firebase';
-import { isUserAuthorised } from '../api/users.api';
 
 const UserContext = createContext(null);
 
@@ -12,16 +11,8 @@ export const UserProvider = ({ children }) => {
 
     useEffect(() => {
         auth.onAuthStateChanged(function (user) {
-            if (user) {
-                isUserAuthorised(user.uid).then((exists) => {
-                    if (exists) {
-                        setUser(user);
-                    }
-                    setLoading(false);
-                });
-            } else {
-                setLoading(false);
-            }
+            setUser(user);
+            setLoading(false);
         });
     }, []);
     if (loading) return <>Loading...</>;

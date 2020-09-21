@@ -15,7 +15,12 @@ export const useFirestore = (query, transform, listen = false) => {
             });
         };
         if (listen) {
-            query.onSnapshot(setData);
+            query.onSnapshot(setData, (error) => {
+                setState({
+                    loading: false,
+                    error,
+                });
+            });
         } else {
             query
                 .get()
