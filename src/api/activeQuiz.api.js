@@ -14,7 +14,7 @@ export const activeQuizStatuses = {
 
 const defaultActiveQuiz = () => ({
     status: activeQuizStatuses.waiting,
-    pin: Math.floor(Math.random() * 100000),
+    pin: Math.floor(Math.random() * 100000).toString(),
 });
 
 export const createActiveQuiz = async (details = {}) => {

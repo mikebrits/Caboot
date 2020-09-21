@@ -1,5 +1,4 @@
 import Head from 'next/head';
-import styles from '../styles/Home.module.css';
 import { Page } from '../src/components/Page';
 import React, { useState } from 'react';
 import Paper from '@material-ui/core/Paper';
@@ -8,6 +7,8 @@ import InputBase from '@material-ui/core/InputBase';
 import { BsPlay } from 'react-icons/bs';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { useRouter } from 'next/router';
+import Button from '@material-ui/core/Button';
+const { uniqueNamesGenerator, adjectives, animals } = require('unique-names-generator');
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -29,10 +30,19 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+const getName = () => {
+    return uniqueNamesGenerator({
+        dictionaries: [adjectives, animals],
+        style: 'capital',
+        separator: '',
+    });
+};
+
 export default function Home() {
     const classes = useStyles();
     const [pin, setPin] = useState('');
     const router = useRouter();
+    const [name, setName] = useState(getName());
     const handleSubmit = () => {
         router.push(`/play/${pin.trim()}`);
     };
@@ -65,6 +75,11 @@ export default function Home() {
                     <IconButton type="submit" className={classes.iconButton} aria-label="search">
                         <BsPlay />
                     </IconButton>
+                </Paper>
+                <br />
+                <Paper className={classes.root}>
+                    <p>{name}</p> <br />
+                    <Button onClick={() => setName(getName())}>Get New Name</Button>
                 </Paper>
             </div>
         </Page>
