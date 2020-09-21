@@ -1,6 +1,6 @@
 import React from 'react';
 import { requiresAuth } from '../src/helpers/withAuth';
-import { useAllQuizzes } from '../src/api/quizzes/quizzes.api';
+import { useAllQuizzes } from '../src/api/quizzes.api';
 
 const Private = ({ user }) => {
     const [quizzes, loading] = useAllQuizzes();

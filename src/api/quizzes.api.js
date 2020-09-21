@@ -1,6 +1,6 @@
-import { db } from '../../config/firebase';
-import { useDoc, useRealtimeCollection } from '../query';
-import { useUser } from '../../helpers/UserContext';
+import { db } from '../config/firebase';
+import { useDoc, useRealtimeCollection } from './query';
+import { useUser } from '../helpers/UserContext';
 
 export const userRef = (id) => db.collection('users').doc(id);
 export const quizCollectionRef = (userId) => userRef(userId).collection('quizzes');

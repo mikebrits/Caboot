@@ -7,7 +7,7 @@ import {
     useQuestions,
     useQuiz,
     useSaveQuizQuestions,
-} from '../../../src/api/quizzes/quizzes.api';
+} from '../../../src/api/quizzes.api';
 import Spinner from '../../../src/components/Spinner';
 import EditQuestion from '../../../src/components/EditQuestion';
 import { toast } from 'react-toastify';

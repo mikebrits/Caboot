@@ -1,4 +1,4 @@
-import { getQuiz } from '../../../../src/api/quizzes/quizzes.api';
+import { getQuiz } from '../../../../src/api/quizzes.api';
 
 export default async (req, res) => {
     const result = await getQuiz(req.query.id);

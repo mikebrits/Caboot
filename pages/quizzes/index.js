@@ -1,5 +1,5 @@
 import { requiresAuth } from '../../src/helpers/withAuth';
-import { useAllQuizzes, useDeleteQuiz } from '../../src/api/quizzes/quizzes.api';
+import { useAllQuizzes, useDeleteQuiz } from '../../src/api/quizzes.api';
 import React from 'react';
 import { Page } from '../../src/components/Page';
 import Spinner from '../../src/components/Spinner';

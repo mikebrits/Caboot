@@ -34,7 +34,7 @@ export const useFirestore = (query, transform, listen = false) => {
 const transformDoc = (data) => (data.exists ? { id: data.id, ...data.data() } : null);
 const transformCollection = (snapshot) =>
     snapshot.docs.map((item) => {
-        return { id: item.id, ...item.data() };
+        return transformDoc(item);
     });
 
 export const useCollection = (query) => useFirestore(query, transformCollection);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { requiresAuth } from '../../../src/helpers/withAuth';
 import { Page } from '../../../src/components/Page';
-import { useDeleteQuiz, useQuestions, useQuiz } from '../../../src/api/quizzes/quizzes.api';
+import { useDeleteQuiz, useQuestions, useQuiz } from '../../../src/api/quizzes.api';
 import Spinner from '../../../src/components/Spinner';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Button from '@material-ui/core/Button';
