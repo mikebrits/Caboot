@@ -8,6 +8,8 @@ import { BsPlay } from 'react-icons/bs';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { useRouter } from 'next/router';
 import Button from '@material-ui/core/Button';
+import { joinGame } from '../src/api/activeQuiz.api';
+import { toast } from 'react-toastify';
 const { uniqueNamesGenerator, adjectives, animals } = require('unique-names-generator');
 
 const useStyles = makeStyles((theme) => ({
@@ -43,8 +45,15 @@ export default function Home() {
     const [pin, setPin] = useState('');
     const router = useRouter();
     const [name, setName] = useState(getName());
-    const handleSubmit = () => {
-        router.push(`/play/${pin.trim()}`);
+    const handleSubmit = async () => {
+        try {
+            await joinGame(pin, name);
+            toast.success('Joined Game!');
+            await router.push(`/play/${pin.trim()}`);
+        } catch (e) {
+            toast.error(`Could not join game: ${e}`);
+            console.error(e);
+        }
     };
     return (
         <Page>

@@ -4,23 +4,32 @@ import { useActiveQuizByPin } from '../../src/api/activeQuiz.api';
 import Spinner from '../../src/components/Spinner';
 
 const Play = ({ pin }) => {
-    const [quizArray, loading] = useActiveQuizByPin(pin);
+    const [{ player, game }, loading, error] = useActiveQuizByPin(pin);
 
     if (loading) {
         return <Spinner />;
     }
-    const quiz = quizArray[0];
-    if (!quiz) {
+    if (!game) {
         return (
             <Page>
                 <h1>Quiz Not Found</h1>
             </Page>
         );
     }
+    if (error) {
+        return (
+            <Page>
+                <h1>There was an error loading your game</h1>
+            </Page>
+        );
+    }
+    console.log({ player, game });
 
     return (
         <Page>
-            <h1>{quiz.title}</h1>
+            <h1>{game.title}</h1>
+            <p>Your name is {player.name}</p>
+            <p>Game status: {game.status}</p>
         </Page>
     );
 };

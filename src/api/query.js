@@ -36,8 +36,8 @@ export const useFirestore = (query, transform, listen = false) => {
     return [data, loading, error];
 };
 
-const transformDoc = (data) => (data.exists ? { id: data.id, ...data.data() } : null);
-const transformCollection = (snapshot) =>
+export const transformDoc = (data) => (data.exists ? { id: data.id, ...data.data() } : null);
+export const transformCollection = (snapshot) =>
     snapshot.docs.map((item) => {
         return transformDoc(item);
     });
