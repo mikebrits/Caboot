@@ -20,6 +20,7 @@ const EditQuestionList = ({ questions, order, onQuestionChange, onQuestionDelete
     };
     const orderedQuestions = useMemo(() => order.map((id) => questions.find((i) => i.id === id)), [
         order,
+        questions,
     ]);
     return (
         <DragDropContext onDragEnd={onDragEnd}>

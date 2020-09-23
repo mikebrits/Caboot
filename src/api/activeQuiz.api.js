@@ -44,7 +44,7 @@ export const updateActiveQuiz = async (id, data) => {
 };
 
 export const startActiveQuiz = async (id) => {
-    await updateActiveQuiz(id, { status: activeQuizStatuses.inProgress });
+    await updateActiveQuiz(id, { status: activeQuizStatuses.inProgress, questionIndex: 0 });
 };
 
 export const endActiveQuiz = async (id) => {
@@ -116,7 +116,17 @@ export const joinGame = async (pin, name) => {
     if (getPlayerForLocalGame(game.id)) {
         throw new Error(`You have already joined this game`);
     }
+    if (game.status !== activeQuizStatuses.waiting) {
+        throw new Error('This game is not currently accepting new players');
+    }
     const player = await addPlayerToGame(game.id, name);
     setLocalGame(game.id, player);
     return player;
+};
+
+export const setCurrentQuestion = async (id, currentQuestion, answers) => {
+    await activeQuizRef(id).update({
+        currentQuestion,
+        answers,
+    });
 };
