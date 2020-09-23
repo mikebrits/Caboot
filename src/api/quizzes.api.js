@@ -36,6 +36,7 @@ export const useQuestions = (quizId) => {
 export const getNewQuestion = () => ({
     text: '',
     answers: [],
+    answer: '0',
 });
 
 export const useAddQuestion = (quizId) => {

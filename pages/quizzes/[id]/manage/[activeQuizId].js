@@ -3,6 +3,8 @@ import { Page } from '../../../../src/components/Page';
 import { requiresAuth } from '../../../../src/helpers/withAuth';
 import {
     activeQuizStatuses,
+    resetCurrentQuiz,
+    setCurrentQuestion,
     startActiveQuiz,
     useActiveQuiz,
 } from '../../../../src/api/activeQuiz.api';
@@ -17,14 +19,20 @@ const Manage = ({ id, activeQuizId }) => {
     const [questions, questionsLoading] = useQuestions(id);
     const [players] = usePlayers(activeQuizId);
 
+    const orderedQuestions = () =>
+        quiz.questionOrder.map((id) => questions.find((i) => i.id === id));
+    const nextQuestion = () => orderedQuestions()[game.questionIndex];
+
     const handleStart = async () => {
         await startActiveQuiz(activeQuizId);
     };
 
-    if (loading || quizLoading || questionsLoading) return <Spinner />;
+    const askQuestion = async () => {
+        const question = nextQuestion();
+        await setCurrentQuestion(activeQuizId, question.id, question.text, question.answers);
+    };
 
-    //TODO: Use memo
-    const orderedQuestions = quiz.questionOrder.map((id) => questions.find((i) => i.id === id));
+    if (loading || quizLoading || questionsLoading) return <Spinner />;
 
     if (!game || !quiz)
         return (
@@ -41,6 +49,13 @@ const Manage = ({ id, activeQuizId }) => {
     return (
         <Page>
             <h1>Manage Game: {quiz.title}</h1>
+            <Button
+                color="primary"
+                variant="contained"
+                onClick={() => resetCurrentQuiz(activeQuizId)}
+            >
+                Reset Game
+            </Button>
             <p>Current State: {game.status}</p>
             {game.status === activeQuizStatuses.waiting && (
                 <Button color="primary" variant="contained" onClick={handleStart}>
@@ -53,7 +68,10 @@ const Manage = ({ id, activeQuizId }) => {
             {game.status === activeQuizStatuses.inProgress && (
                 <>
                     <h3>Next Question:</h3>
-                    {orderedQuestions[game.questionIndex].text}
+                    {nextQuestion().text}
+                    <Button color="primary" variant="contained" onClick={askQuestion}>
+                        Start Question
+                    </Button>
                 </>
             )}
 

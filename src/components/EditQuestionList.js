@@ -27,26 +27,33 @@ const EditQuestionList = ({ questions, order, onQuestionChange, onQuestionDelete
             <Droppable droppableId="droppable">
                 {(provided) => (
                     <div {...provided.droppableProps} ref={provided.innerRef}>
-                        {orderedQuestions.map((question, index) => (
-                            <Draggable key={question.id} draggableId={question.id} index={index}>
-                                {(provided) => (
-                                    <div
-                                        ref={provided.innerRef}
-                                        {...provided.draggableProps}
-                                        {...provided.dragHandleProps}
+                        {orderedQuestions.map(
+                            (question, index) =>
+                                question && (
+                                    <Draggable
+                                        key={question.id}
+                                        draggableId={question.id}
+                                        index={index}
                                     >
-                                        <EditQuestion
-                                            question={question}
-                                            id={question.id}
-                                            onChange={onQuestionChange}
-                                            onDelete={onQuestionDelete}
-                                            key={question.id}
-                                            index={index + 1}
-                                        />
-                                    </div>
-                                )}
-                            </Draggable>
-                        ))}
+                                        {(provided) => (
+                                            <div
+                                                ref={provided.innerRef}
+                                                {...provided.draggableProps}
+                                                {...provided.dragHandleProps}
+                                            >
+                                                <EditQuestion
+                                                    question={question}
+                                                    id={question.id}
+                                                    onChange={onQuestionChange}
+                                                    onDelete={onQuestionDelete}
+                                                    key={question.id}
+                                                    index={index + 1}
+                                                />
+                                            </div>
+                                        )}
+                                    </Draggable>
+                                ),
+                        )}
                     </div>
                 )}
             </Droppable>

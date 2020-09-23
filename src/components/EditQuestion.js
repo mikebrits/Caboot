@@ -76,6 +76,7 @@ const EditQuestion = ({ question, id, onChange, index, onDelete }) => {
                     id="standard-basic"
                     label={'Question Text'}
                     value={question.text}
+                    autoComplete="off"
                     onChange={(e) => handleQuestionChange(e.target.value)}
                 />
                 <h3>Answers:</h3>
@@ -88,6 +89,7 @@ const EditQuestion = ({ question, id, onChange, index, onDelete }) => {
                                     className={classes.questionTextField}
                                     label={index === 0 ? 'Correct Answer:' : `Answer ${index + 1}:`}
                                     value={answer}
+                                    autoComplete="off"
                                     onChange={(e) => handleAnswerChange(index, e.target.value)}
                                 />
                                 {index > 0 && (

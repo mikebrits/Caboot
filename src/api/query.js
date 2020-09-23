@@ -1,3 +1,5 @@
+import { db } from '../config/firebase';
+
 const { useEffect } = require('react');
 const { useState } = require('react');
 
@@ -49,3 +51,12 @@ export const useDoc = (query) => useFirestore(query, transformDoc);
 export const useRealtimeCollection = (query) => useFirestore(query, transformCollection, true);
 
 export const useRealtimeDoc = (query) => useFirestore(query, transformDoc, true);
+
+export const batchUpdate = async (collectionRef, data) => {
+    const batch = db.batch();
+    const snap = await collectionRef.get();
+    snap.docs.forEach(({ id }) => {
+        batch.update(collectionRef.doc(id), data);
+    });
+    await batch.commit();
+};

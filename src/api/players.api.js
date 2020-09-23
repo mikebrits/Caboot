@@ -12,7 +12,12 @@ export const addPlayerToGame = async (gameId, name) => {
     if (exists) {
         throw new Error('Name already exists');
     }
-    const player = await playersCollectionRef(gameId).add({ name, score: 0, streak: 0 });
+    const player = await playersCollectionRef(gameId).add({
+        name,
+        score: 0,
+        streak: 0,
+        answers: [],
+    });
     return { id: player.id, name };
 };
 

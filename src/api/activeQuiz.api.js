@@ -1,10 +1,11 @@
 import { db } from '../config/firebase';
 import { useUser } from '../helpers/UserContext';
-import { transformDoc, useRealtimeDoc } from './query';
-import { addPlayerToGame, playerRef } from './players.api';
+import { batchUpdate, transformDoc, useRealtimeDoc } from './query';
+import { addPlayerToGame, playerRef, playersCollectionRef } from './players.api';
 import { getPlayerForLocalGame, setLocalGame } from './localGameState';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import * as firebase from 'firebase';
 
 export const activeQuizCollectionRef = () => db.collection('active-quizzes');
 export const activeQuizRef = (id) => activeQuizCollectionRef().doc(id);
@@ -14,6 +15,8 @@ export const activeQuizStatuses = {
     inProgress: 'IN_PROGRESS',
     ended: 'ENDED',
     waiting: 'WAITING',
+    preQuestion: 'PRE_QUESTION',
+    inQuestion: 'QUESTION',
 };
 
 const defaultActiveQuiz = () => ({
@@ -53,14 +56,14 @@ export const endActiveQuiz = async (id) => {
 
 export const useActiveQuizByPin = (pin) => {
     const [error, setError] = useState('');
-    const [game, setGame] = useState(null);
-    const [player, setPlayer] = useState(null);
+    const [game, setGame] = useState({});
+    const [player, setPlayer] = useState({});
 
     const [playerLoading, setPlayerLoading] = useState(true);
     const [gameLoading, setGameLoading] = useState(true);
     const router = useRouter();
 
-    const getPlayerAndGameSnapshots = async (playerId, gameId) => {
+    const getPlayerAndGameSnapshots = (playerId, gameId) => {
         playerRef(gameId, playerId).onSnapshot(
             (data) => {
                 setPlayer(transformDoc(data));
@@ -124,9 +127,48 @@ export const joinGame = async (pin, name) => {
     return player;
 };
 
-export const setCurrentQuestion = async (id, currentQuestion, answers) => {
+export const setCurrentQuestion = async (id, currentQuestionId, currentQuestion, answers) => {
     await activeQuizRef(id).update({
+        currentQuestionId,
         currentQuestion,
         answers,
+        currentQuestionStartedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+};
+
+export const resetCurrentQuiz = async (id) => {
+    await activeQuizRef(id).update({
+        status: activeQuizStatuses.waiting,
+        questionIndex: 0,
+        currentQuestion: '',
+        answers: [],
+    });
+    await batchUpdate(playersCollectionRef(id), { score: 0, streak: [], answers: [] });
+};
+
+export const answerQuestion = async (
+    gameId,
+    playerId,
+    questionId,
+    answerId,
+    startedAt,
+    offset,
+    playerScore,
+) => {
+    const answerCorrect = answerId === '0';
+    const timeFinished = new Date().getTime();
+    const timeStarted = new Date(startedAt.seconds * 1000).getTime() + offset;
+    const possibleScore = 5000 - (timeFinished - timeStarted);
+    const adjustedScore = possibleScore > 1000 ? possibleScore : 1000;
+    const score = answerCorrect ? adjustedScore : 0;
+    console.log(score);
+    const ref = playerRef(gameId, playerId);
+    await ref.update({
+        score: playerScore + score,
+        answers: firebase.firestore.FieldValue.arrayUnion({
+            questionId,
+            answerId,
+            score,
+        }),
     });
 };
