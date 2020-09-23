@@ -2,20 +2,12 @@ import React from 'react';
 import { Page } from '../../src/components/Page';
 import { useActiveQuizByPin } from '../../src/api/activeQuiz.api';
 import Spinner from '../../src/components/Spinner';
+import { getPlayerForLocalGame } from '../../src/api/localGameState';
+import { useRouter } from 'next/router';
 
 const Play = ({ pin }) => {
     const [{ player, game }, loading, error] = useActiveQuizByPin(pin);
-
-    if (loading) {
-        return <Spinner />;
-    }
-    if (!game) {
-        return (
-            <Page>
-                <h1>Quiz Not Found</h1>
-            </Page>
-        );
-    }
+    const router = useRouter();
     if (error) {
         return (
             <Page>
@@ -23,6 +15,22 @@ const Play = ({ pin }) => {
             </Page>
         );
     }
+    if (loading) {
+        return <Spinner />;
+    }
+
+    if (!getPlayerForLocalGame(game.id)) {
+        router.push(`/play/name?${pin}`);
+    }
+
+    if (!game) {
+        return (
+            <Page>
+                <h1>Quiz Not Found</h1>
+            </Page>
+        );
+    }
+
     console.log({ player, game });
 
     return (

@@ -4,6 +4,7 @@ import { transformDoc, useRealtimeDoc } from './query';
 import { addPlayerToGame, playerRef } from './players.api';
 import { getPlayerForLocalGame, setLocalGame } from './localGameState';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 
 export const activeQuizCollectionRef = () => db.collection('active-quizzes');
 export const activeQuizRef = (id) => activeQuizCollectionRef().doc(id);
@@ -57,6 +58,7 @@ export const useActiveQuizByPin = (pin) => {
 
     const [playerLoading, setPlayerLoading] = useState(true);
     const [gameLoading, setGameLoading] = useState(true);
+    const router = useRouter();
 
     const getPlayerAndGameSnapshots = async (playerId, gameId) => {
         playerRef(gameId, playerId).onSnapshot(
@@ -85,7 +87,11 @@ export const useActiveQuizByPin = (pin) => {
         getGameByPin(pin)
             .then((game) => {
                 const player = getPlayerForLocalGame(game.id);
-                getPlayerAndGameSnapshots(player.id, game.id);
+                if (!player) {
+                    router.push(`/play/name?pin=${pin}`);
+                } else {
+                    getPlayerAndGameSnapshots(player.id, game.id);
+                }
             })
             .catch((e) => setError(e));
     }, []);

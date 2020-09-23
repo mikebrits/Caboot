@@ -69,7 +69,11 @@ function Quiz({ id }) {
                 </div>
             </div>
 
-            <List>{questions.map((item) => item && <QuestionListItem question={item} />)}</List>
+            <List>
+                {questions.map(
+                    (item) => item && <QuestionListItem key={item.id} question={item} />,
+                )}
+            </List>
         </Page>
     );
 }

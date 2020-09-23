@@ -4,15 +4,17 @@ import { requiresAuth } from '../../../../src/helpers/withAuth';
 import { useActiveQuiz } from '../../../../src/api/activeQuiz.api';
 import Spinner from '../../../../src/components/Spinner';
 import { useQuestions, useQuiz } from '../../../../src/api/quizzes.api';
+import { usePlayers } from '../../../../src/api/players.api';
 
 const Manage = ({ id, activeQuizId }) => {
-    const [activeQuiz, loading] = useActiveQuiz(activeQuizId);
+    const [game, loading] = useActiveQuiz(activeQuizId);
     const [quiz, quizLoading] = useQuiz(id);
     const [questions, questionsLoading] = useQuestions(id);
+    const [players] = usePlayers(activeQuizId);
 
-    if ((loading, quizLoading, questionsLoading)) return <Spinner />;
+    if (loading || quizLoading || questionsLoading) return <Spinner />;
 
-    if (!activeQuiz || !quiz)
+    if (!game || !quiz)
         return (
             <Page>
                 <h1>No Quiz found</h1>
@@ -26,7 +28,17 @@ const Manage = ({ id, activeQuizId }) => {
         );
     return (
         <Page>
-            <h1>Manage Game</h1>
+            <h1>Manage Game: {quiz.title}</h1>
+            <p>Current State: {quiz.status}</p>
+            <p>Total Questions: {questions.length}</p>
+            <p>Game link: play/{game.pin}</p>
+            <div>
+                <h3>Players</h3>
+                {!players && <p>No players in yet</p>}
+                <ul>
+                    {players && players.map((player) => <li key={player.id}>{player.name}</li>)}
+                </ul>
+            </div>
         </Page>
     );
 };

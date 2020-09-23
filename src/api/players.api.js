@@ -1,5 +1,6 @@
 //import {db} from "../config/firebase";
 import { activeQuizRef } from './activeQuiz.api';
+import { useRealtimeCollection } from './query';
 
 export const playersCollectionRef = (gameId) => activeQuizRef(gameId).collection('players');
 export const playerRef = (gameId, playerId) => playersCollectionRef(gameId).doc(playerId);
@@ -13,4 +14,8 @@ export const addPlayerToGame = async (gameId, name) => {
     }
     const player = await playersCollectionRef(gameId).add({ name, score: 0, streak: 0 });
     return { id: player.id, name };
+};
+
+export const usePlayers = (gameId) => {
+    return useRealtimeCollection(playersCollectionRef(gameId));
 };

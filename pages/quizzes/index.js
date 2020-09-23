@@ -1,5 +1,5 @@
 import { requiresAuth } from '../../src/helpers/withAuth';
-import { useAllQuizzes, useDeleteQuiz, useStartQuiz, useStopQuiz } from '../../src/api/quizzes.api';
+import { useAllQuizzes, useDeleteQuiz, useStartQuiz } from '../../src/api/quizzes.api';
 import React from 'react';
 import { Page } from '../../src/components/Page';
 import Spinner from '../../src/components/Spinner';
@@ -10,14 +10,13 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
-import { BsPencil, BsPlay, BsTrash, BsStop } from 'react-icons/bs';
+import { BsGear, BsPencil, BsPlay, BsTrash } from 'react-icons/bs';
 import { toast } from 'react-toastify';
 
 function Quizzes() {
     const [quizzes, loading, error] = useAllQuizzes();
     const deleteQuiz = useDeleteQuiz();
     const startQuiz = useStartQuiz();
-    const stopQuiz = useStopQuiz();
     const handleDeleteQuiz = async (id) => {
         await deleteQuiz(id);
         toast.success('Quiz Deleted');
@@ -25,10 +24,6 @@ function Quizzes() {
 
     const handleStart = async (quiz) => {
         await startQuiz(quiz);
-    };
-
-    const handleStop = async (quiz) => {
-        await stopQuiz(quiz);
     };
 
     if (loading) return <Spinner />;
@@ -49,15 +44,12 @@ function Quizzes() {
                                 <Link href={`/quizzes/${quiz.id}`}>{quiz.title}</Link>
                             </ListItemText>
                             <ListItemSecondaryAction>
-                                {quiz.status === 'IN_PROGRESS' ? (
-                                    <IconButton
-                                        size={'small'}
-                                        onClick={() => {
-                                            handleStop(quiz);
-                                        }}
-                                    >
-                                        <BsStop />
-                                    </IconButton>
+                                {quiz.status === 'WAITING' || quiz.status === 'IN_PROGRESS' ? (
+                                    <Link href={`/quizzes/${quiz.id}/manage/${quiz.activeQuiz}`}>
+                                        <IconButton size={'small'}>
+                                            <BsGear />
+                                        </IconButton>
+                                    </Link>
                                 ) : (
                                     <IconButton
                                         size={'small'}

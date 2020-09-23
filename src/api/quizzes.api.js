@@ -1,7 +1,13 @@
 import { db } from '../config/firebase';
-import { useDoc, useRealtimeCollection } from './query';
+import { useRealtimeCollection, useRealtimeDoc } from './query';
 import { useUser } from '../helpers/UserContext';
 import { createActiveQuiz, endActiveQuiz } from './activeQuiz.api';
+
+export const QuizStatuses = {
+    idle: 'IDLE',
+    waiting: 'WAITING',
+    inProgress: 'IN_PROGRESS',
+};
 
 export const userRef = (id) => db.collection('users').doc(id);
 export const quizCollectionRef = (userId) => userRef(userId).collection('quizzes');
@@ -13,7 +19,7 @@ export const questionRef = (userId, quizId, questionId) =>
 
 export const useQuiz = (quizId) => {
     const { user } = useUser();
-    return useDoc(quizRef(user.uid, quizId));
+    return useRealtimeDoc(quizRef(user.uid, quizId));
 };
 
 export const useAllQuizzes = () => {
@@ -68,8 +74,9 @@ export const useSaveQuizQuestions = (quizId) => {
 export const useCreateQuiz = () => {
     const { user } = useUser();
     return async (title) => {
-        const doc = await quizCollectionRef(user.uid).add({ title });
-        return { id: doc.uid, title };
+        const quiz = { title, status: QuizStatuses.idle };
+        const doc = await quizCollectionRef(user.uid).add(quiz);
+        return { id: doc.uid, ...quiz };
     };
 };
 
@@ -90,7 +97,7 @@ export const useStartQuiz = () => {
         });
         await quizRef(user.uid, quiz.id).update({
             activeQuiz: activeQuiz.id,
-            status: 'IN_PROGRESS',
+            status: QuizStatuses.waiting,
         });
     };
 };
@@ -100,10 +107,8 @@ export const useStopQuiz = () => {
     return async (quiz) => {
         await endActiveQuiz(quiz.activeQuiz);
         await quizRef(user.uid, quiz.id).update({
-            status: 'WAITING',
+            status: QuizStatuses.idle,
             activeQuiz: '',
         });
     };
 };
-
-export const startQuiz = async (userId, quizId) => {};
