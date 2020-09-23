@@ -7,19 +7,23 @@ import {
     useQuestions,
     useQuiz,
     useSaveQuizQuestions,
+    useUpdateQuestionOrder,
 } from '../../../src/api/quizzes.api';
 import Spinner from '../../../src/components/Spinner';
-import EditQuestion from '../../../src/components/EditQuestion';
 import { toast } from 'react-toastify';
 import Button from '@material-ui/core/Button';
+import { BsPlusCircle } from 'react-icons/bs';
+import EditQuestionList from '../../../src/components/EditQuestionList';
 
 function Quiz({ id }) {
     const [quiz, loading] = useQuiz(id);
     const [questions, questionsLoading] = useQuestions(id);
     const [editQuestions, setEditQuestions] = useState([]);
+    const [order, setOrder] = useState(null);
     const saveQuestions = useSaveQuizQuestions(id);
     const addQuestion = useAddQuestion(id);
     const deleteQuestion = useDeleteQuestion(id);
+    const updateOrder = useUpdateQuestionOrder(id);
 
     const handleUpdateQuestion = (id, question) => {
         if (editQuestions.find((item) => item.id === id)) {
@@ -38,16 +42,24 @@ function Quiz({ id }) {
 
     const handleSave = async () => {
         await saveQuestions(editQuestions);
+        if (order) {
+            await updateOrder(order);
+        }
         setEditQuestions([]);
         toast.success('Quiz Saved');
     };
 
-    const handleDelete = (id) => {
+    const handleDeleteQuestion = (id) => {
         deleteQuestion(id);
     };
 
     const handleAddQuestion = () => {
         addQuestion();
+    };
+
+    const handleReorder = (order) => {
+        setOrder(order);
+        // updateOrder(order);
     };
 
     if (loading || questionsLoading) return <Spinner />;
@@ -56,33 +68,31 @@ function Quiz({ id }) {
         return editQuestions.find((i) => i.id === question.id) || question;
     });
 
-    const collatedQuestions = [...filteredQuestions, ...editQuestions.filter((i) => !i.id)];
     return (
         <Page>
             <h1>{quiz.title}</h1>
-            {questionsLoading ? (
-                <Spinner />
-            ) : (
-                collatedQuestions.map(
-                    (item, index) =>
-                        item && (
-                            <EditQuestion
-                                question={item}
-                                id={item.id}
-                                onChange={handleUpdateQuestion}
-                                onDelete={handleDelete}
-                                key={item.id}
-                                index={index + 1}
-                            />
-                        ),
-                )
-            )}
-            <Button variant="contained" color="primary" onClick={handleAddQuestion}>
-                Add Question
-            </Button>
+
+            <EditQuestionList
+                order={order || quiz.questionOrder}
+                questions={filteredQuestions}
+                onQuestionChange={handleUpdateQuestion}
+                onQuestionDelete={handleDeleteQuestion}
+                onReorder={handleReorder}
+            />
+
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <Button
+                    startIcon={<BsPlusCircle />}
+                    variant="outlined"
+                    color="primary"
+                    onClick={handleAddQuestion}
+                >
+                    Add Question
+                </Button>
+            </div>
             <hr />
             <Button variant="contained" color="primary" onClick={handleSave}>
-                SaveQuiz
+                Save Quiz
             </Button>
         </Page>
     );

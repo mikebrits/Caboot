@@ -10,8 +10,25 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import makeStyles from '@material-ui/core/styles/makeStyles';
+
+const useStyles = makeStyles(() => ({
+    questionTextField: {
+        width: 500,
+        maxWidth: '100%',
+    },
+    questionContainer: {
+        marginBottom: 16,
+        display: 'flex',
+        alignItems: 'flex-end',
+    },
+    actionButton: {
+        marginBottom: 4,
+    },
+}));
 
 const EditQuestion = ({ question, id, onChange, index, onDelete }) => {
+    const classes = useStyles();
     const handleAnswerChange = (index, text) => {
         onChange(id, {
             ...question,
@@ -55,6 +72,7 @@ const EditQuestion = ({ question, id, onChange, index, onDelete }) => {
                     </PopoverButton>
                 </div>
                 <TextField
+                    className={classes.questionTextField}
                     id="standard-basic"
                     label={'Question Text'}
                     value={question.text}
@@ -65,16 +83,16 @@ const EditQuestion = ({ question, id, onChange, index, onDelete }) => {
                 {question.answers &&
                     question.answers.map((answer, index) => {
                         return (
-                            <div style={{ marginBottom: 16 }}>
+                            <div key={index} className={classes.questionContainer}>
                                 <TextField
-                                    id="standard-basic"
-                                    key={index}
+                                    className={classes.questionTextField}
                                     label={index === 0 ? 'Correct Answer:' : `Answer ${index + 1}:`}
                                     value={answer}
                                     onChange={(e) => handleAnswerChange(index, e.target.value)}
                                 />
                                 {index > 0 && (
                                     <IconButton
+                                        className={classes.actionButton}
                                         size="small"
                                         aria-label="delete answer"
                                         onClick={() => handleRemoveAnswer(index)}

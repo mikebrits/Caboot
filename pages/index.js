@@ -34,6 +34,7 @@ export default function Home() {
     const [pin, setPin] = useState('');
     const [error, setError] = useState('');
     const router = useRouter();
+    const favicon = '/favicon.ico';
     const handleSubmit = async () => {
         try {
             setError('');
@@ -48,7 +49,7 @@ export default function Home() {
             <div>
                 <Head>
                     <title>Caboot</title>
-                    <link rel="icon" href="/favicon.ico" />
+                    <link rel="icon" href={favicon} />
                 </Head>
 
                 <h1>Welcome to Caboot</h1>
@@ -70,11 +71,12 @@ export default function Home() {
                         }}
                         value={pin}
                     />
-                    {error && <p>{error.toString()}</p>}
+
                     <IconButton type="submit" className={classes.iconButton} aria-label="search">
                         <BsPlay />
                     </IconButton>
                 </Paper>
+                {error && <p>{error.toString()}</p>}
             </div>
         </Page>
     );

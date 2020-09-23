@@ -2,6 +2,7 @@ import { db } from '../config/firebase';
 import { useRealtimeCollection, useRealtimeDoc } from './query';
 import { useUser } from '../helpers/UserContext';
 import { createActiveQuiz, endActiveQuiz } from './activeQuiz.api';
+import * as firebase from 'firebase';
 
 export const QuizStatuses = {
     idle: 'IDLE',
@@ -33,7 +34,7 @@ export const useQuestions = (quizId) => {
 };
 
 export const getNewQuestion = () => ({
-    title: '',
+    text: '',
     answers: [],
 });
 
@@ -45,6 +46,9 @@ export const useAddQuestion = (quizId) => {
             ...data,
         };
         const doc = await questionCollectionRef(user.uid, quizId).add(question);
+        await quizRef(user.uid, quizId).update({
+            questionOrder: firebase.firestore.FieldValue.arrayUnion(doc.id),
+        });
         return { id: doc.id, ...question };
     };
 };
@@ -53,6 +57,25 @@ export const useDeleteQuestion = (quizId) => {
     const { user } = useUser();
     return async (questionId) => {
         await questionRef(user.uid, quizId, questionId).delete();
+        await quizRef(user.uid, quizId).update({
+            questionOrder: firebase.firestore.FieldValue.arrayRemove(questionId),
+        });
+    };
+};
+
+export const useUpdateQuiz = (quizId) => {
+    const { user } = useUser();
+    return (data) => updateQuiz(user.uid, quizId, data);
+};
+
+const updateQuiz = async (userId, quizId, data) => {
+    await quizRef(userId, quizId).update(data);
+};
+
+export const useUpdateQuestionOrder = (quizId) => {
+    const { user } = useUser();
+    return async (questionOrder) => {
+        await updateQuiz(user.uid, quizId, { questionOrder });
     };
 };
 
@@ -74,7 +97,7 @@ export const useSaveQuizQuestions = (quizId) => {
 export const useCreateQuiz = () => {
     const { user } = useUser();
     return async (title) => {
-        const quiz = { title, status: QuizStatuses.idle };
+        const quiz = { title, status: QuizStatuses.idle, questionOrder: [] };
         const doc = await quizCollectionRef(user.uid).add(quiz);
         return { id: doc.uid, ...quiz };
     };
