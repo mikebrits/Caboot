@@ -7,18 +7,21 @@ export const playerRef = (gameId, playerId) => playersCollectionRef(gameId).doc(
 export const playerByNameRef = (gameId, name) =>
     playersCollectionRef(gameId).where('name', '==', name);
 
+const getNewPlayer = (name) => ({
+    name,
+    score: 0,
+    streak: 0,
+    answers: [],
+})
+
 export const addPlayerToGame = async (gameId, name) => {
     const exists = (await playerByNameRef(gameId, name).get()).docs[0];
     if (exists) {
         throw new Error('Name already exists');
     }
-    const player = await playersCollectionRef(gameId).add({
-        name,
-        score: 0,
-        streak: 0,
-        answers: [],
-    });
-    return { id: player.id, name };
+    const player = getNewPlayer(name);
+    const playerSnap = await playersCollectionRef(gameId).add(player);
+    return { id: playerSnap.id, ...player };
 };
 
 export const usePlayers = (gameId) => {

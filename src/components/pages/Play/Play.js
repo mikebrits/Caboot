@@ -1,29 +1,29 @@
 import Error from '../Error';
-
-export * from './Play';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Page } from '../../Page';
 import { answerQuestion, useActiveQuizByPin } from '../../../api/activeQuiz.api';
 import Spinner from '../../Spinner';
-import { getPlayerForLocalGame } from '../../../api/localGameState';
+import {addAnswerToLocalPlayer, getPlayerForLocalGame, hasPlayerAnsweredQuestion} from '../../../api/localGameState';
 import { useRouter } from 'next/router';
+
+const QUESTION_DURATION = 10000;
 
 const Play = ({ pin }) => {
     const [{ player, game }, loading, error] = useActiveQuizByPin(pin);
     const [answers, setAnswers] = useState(null);
-    const [offset, setOffset] = useState(0);
-    const [currentQuestion, setCurrentQuestion] = useState(null);
     const [startTime, setStartTime] = useState(0);
-    const [questionAnswered, setQuestionAnswered] = useState(false);
     const router = useRouter();
 
+    const hasAnswered = () => hasPlayerAnsweredQuestion(game.id, game.currentQuestionId)
+
     useEffect(() => {
-        if (game && game.currentQuestionId && game.currentQuestionId !== currentQuestion) {
-            setCurrentQuestion(game.question);
-            setQuestionAnswered(false);
-            const startedAt = new Date(game.currentQuestionStartedAt.seconds * 1000);
-            const now = new Date();
-            setOffset(now.getTime() - startedAt.getTime());
+        if (game.currentQuestionId && !hasAnswered()) {
+            setStartTime((new Date()).getTime());
+            setTimeout(() => {
+                if(!hasAnswered()){
+                    handleSubmitAnswer("-1");
+                }
+            }, QUESTION_DURATION)
         }
         if (game.answers) {
             setAnswers(
@@ -34,28 +34,29 @@ const Play = ({ pin }) => {
         }
     }, [game.currentQuestion, game.answers]);
 
+
+
     const handleSubmitAnswer = async (answerId) => {
-        if (!questionAnswered) {
-            setQuestionAnswered(true);
-            await answerQuestion(
+        if (!hasAnswered()) {
+            addAnswerToLocalPlayer(game.id, game.currentQuestionId, answerId);
+            const score = await answerQuestion(
                 game.id,
                 player.id,
                 game.currentQuestionId,
                 answerId,
-                game.currentQuestionStartedAt,
-                offset,
+                startTime,
                 player.score,
             );
+            console.log(score);
+
         }
     };
 
     if (error) {
-        return <Error title={'There was an error loading your game'} />;
+        return <Error title={'There was an error loading your game'} text={error.toString()} />;
     }
 
-    if (!getPlayerForLocalGame(game.id)) {
-        router.push(`/play/name?${pin}`);
-    }
+
 
     if (loading) {
         return <Spinner />;
@@ -65,11 +66,16 @@ const Play = ({ pin }) => {
         return <Error title={'Quiz Not Found'} />;
     }
 
+    if (!getPlayerForLocalGame(game.id)) {
+        router.push(`/play/name?${pin}`);
+    }
+
     return (
         <Page>
             <h1>{game.title}</h1>
             <p>Your name is {player.name}</p>
             <p>Game status: {game.status}</p>
+            <p>Have answered: {hasAnswered().toString()}</p>
 
             {game.currentQuestion && (
                 <>
@@ -77,7 +83,8 @@ const Play = ({ pin }) => {
 
                     {answers.map((answer) => (
                         <button
-                            disabled={questionAnswered}
+                            key={answer.id}
+                            disabled={hasAnswered()}
                             onClick={() => {
                                 handleSubmitAnswer(answer.id);
                             }}

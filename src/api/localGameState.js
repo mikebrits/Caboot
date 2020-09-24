@@ -28,10 +28,27 @@ export const initLocalStorage = () => {
     }
 };
 
-export const getPlayerForLocalGame = (id) => {
-    return get(id);
+export const getPlayerForLocalGame = (gameId) => {
+    return get(gameId);
 };
 
-export const setLocalGame = (id, player) => {
-    set(id, player);
+export const setLocalGame = (gameId, player) => {
+    set(gameId, player);
 };
+
+export const updateLocalPlayer = (gameId, data) => {
+    const player = get(gameId);
+    set(gameId, {...player, ...data});
+};
+
+export const addAnswerToLocalPlayer = (gameId, questionId, answer) => {
+    const player = get(gameId);
+    set(gameId, {...player, answers: [...player.answers, {questionId, answer}]})
+}
+
+export const hasPlayerAnsweredQuestion = (gameId, questionId) => {
+    const player = get(gameId);
+    return !!player.answers.find(item => item.questionId === questionId);
+}
+
+

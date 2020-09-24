@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { Page } from '../../src/components/Page';
-import { answerQuestion, useActiveQuizByPin } from '../../src/api/activeQuiz.api';
-import Spinner from '../../src/components/Spinner';
-import { getPlayerForLocalGame } from '../../src/api/localGameState';
-import { useRouter } from 'next/router';
-import Play from '../../src/components/pages/Play/Play';
+import React from 'react';
+import Play from '../../src/components/pages/Play';
 
-export default ({ pin }) => {
+
+const PlayPage = ({ pin }) => {
     return <Play pin={pin} />;
 };
+
+export default PlayPage;
 
 export async function getServerSideProps(context) {
     return {

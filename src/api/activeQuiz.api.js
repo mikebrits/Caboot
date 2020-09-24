@@ -151,17 +151,15 @@ export const answerQuestion = async (
     playerId,
     questionId,
     answerId,
-    startedAt,
-    offset,
+    timeStarted,
     playerScore,
 ) => {
     const answerCorrect = answerId === '0';
     const timeFinished = new Date().getTime();
-    const timeStarted = new Date(startedAt.seconds * 1000).getTime() + offset;
     const possibleScore = 5000 - (timeFinished - timeStarted);
     const adjustedScore = possibleScore > 1000 ? possibleScore : 1000;
     const score = answerCorrect ? adjustedScore : 0;
-    console.log(score);
+
     const ref = playerRef(gameId, playerId);
     await ref.update({
         score: playerScore + score,
@@ -171,4 +169,5 @@ export const answerQuestion = async (
             score,
         }),
     });
+    return score;
 };
