@@ -20,7 +20,7 @@ export const Page = ({ children }) => {
             <AppBar position="static">
                 <Toolbar>
                     <Link href={'/'}>
-                        <Typography variant="h6">Caboot</Typography>
+                        <Typography variant="h6">Caboot!</Typography>
                     </Link>
                     {user && <Link href={'/quizzes'}>Quizzes</Link>}
 
