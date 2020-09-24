@@ -2,13 +2,13 @@ import _firebase from 'firebase';
 import 'firebase/firestore';
 
 const firebaseConfig = {
-    apiKey: 'AIzaSyAlwDdlg71sVcevDNYqQk-idDL79eR7z5s',
-    authDomain: 'caboot.firebaseapp.com',
-    databaseURL: 'https://caboot.firebaseio.com',
-    projectId: 'caboot',
-    storageBucket: 'caboot.appspot.com',
-    messagingSenderId: '43442942490',
-    appId: '1:43442942490:web:87406a652608494eff17a3',
+    apiKey: process.env.NEXT_PUBLIC_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN,
+    databaseURL: process.env.NEXT_PUBLIC_DATABASE_URL,
+    projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_MESSAGE_SENDER_ID,
+    appId: process.env.NEXT_PUBLIC_APP_ID,
 };
 
 if (!_firebase.apps.length) {
