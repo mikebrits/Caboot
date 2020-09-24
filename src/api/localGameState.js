@@ -51,4 +51,13 @@ export const hasPlayerAnsweredQuestion = (gameId, questionId) => {
     return !!player.answers.find(item => item.questionId === questionId);
 }
 
+export const setLocalQuestionTimer = (gameId, time) => {
+    updateLocalPlayer(gameId, {questionTimer: time})
+}
+
+export const getLocalQuestionTimer = (gameId) => {
+    const player = get(gameId);
+    return player.questionTimer;
+}
+
 

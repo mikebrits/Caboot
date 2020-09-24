@@ -3,7 +3,12 @@ import React, {useEffect, useState} from 'react';
 import { Page } from '../../Page';
 import { answerQuestion, useActiveQuizByPin } from '../../../api/activeQuiz.api';
 import Spinner from '../../Spinner';
-import {addAnswerToLocalPlayer, getPlayerForLocalGame, hasPlayerAnsweredQuestion} from '../../../api/localGameState';
+import {
+    addAnswerToLocalPlayer, getLocalQuestionTimer,
+    getPlayerForLocalGame,
+    hasPlayerAnsweredQuestion,
+    setLocalQuestionTimer
+} from '../../../api/localGameState';
 import { useRouter } from 'next/router';
 
 const QUESTION_DURATION = 10000;
@@ -11,19 +16,28 @@ const QUESTION_DURATION = 10000;
 const Play = ({ pin }) => {
     const [{ player, game }, loading, error] = useActiveQuizByPin(pin);
     const [answers, setAnswers] = useState(null);
-    const [startTime, setStartTime] = useState(0);
     const router = useRouter();
 
     const hasAnswered = () => hasPlayerAnsweredQuestion(game.id, game.currentQuestionId)
 
     useEffect(() => {
         if (game.currentQuestionId && !hasAnswered()) {
-            setStartTime((new Date()).getTime());
+            const time = (new Date()).getTime();
+            let timeRemaining = QUESTION_DURATION;
+            const localTimer = getLocalQuestionTimer(game.id);
+            if(!localTimer){
+                setLocalQuestionTimer(game.id, time);
+            } else {
+                timeRemaining = QUESTION_DURATION - (time - localTimer);
+            }
+
             setTimeout(() => {
                 if(!hasAnswered()){
                     handleSubmitAnswer("-1");
                 }
-            }, QUESTION_DURATION)
+            }, timeRemaining);
+
+
         }
         if (game.answers) {
             setAnswers(
@@ -39,12 +53,13 @@ const Play = ({ pin }) => {
     const handleSubmitAnswer = async (answerId) => {
         if (!hasAnswered()) {
             addAnswerToLocalPlayer(game.id, game.currentQuestionId, answerId);
+            setLocalQuestionTimer(game.id, null);
             const score = await answerQuestion(
                 game.id,
                 player.id,
                 game.currentQuestionId,
                 answerId,
-                startTime,
+                getLocalQuestionTimer(game.id),
                 player.score,
             );
             console.log(score);
