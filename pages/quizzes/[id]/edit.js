@@ -51,6 +51,7 @@ function Quiz({ id }) {
 
     const handleDeleteQuestion = (id) => {
         deleteQuestion(id);
+        setEditQuestions(editQuestions.filter((i) => i.id !== id));
     };
 
     const handleAddQuestion = () => {
@@ -91,7 +92,12 @@ function Quiz({ id }) {
                 </Button>
             </div>
             <hr />
-            <Button variant="contained" color="primary" onClick={handleSave}>
+            <Button
+                disabled={editQuestions.length === 0}
+                variant="contained"
+                color="primary"
+                onClick={handleSave}
+            >
                 Save Quiz
             </Button>
         </Page>

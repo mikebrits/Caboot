@@ -70,9 +70,9 @@ function Quiz({ id }) {
             </div>
 
             <List>
-                {questions.map(
-                    (item) => item && <QuestionListItem key={item.id} question={item} />,
-                )}
+                {quiz.questionOrder
+                    .map((id) => questions.find((i) => i.id === id))
+                    .map((item) => item && <QuestionListItem key={item.id} question={item} />)}
             </List>
         </Page>
     );
