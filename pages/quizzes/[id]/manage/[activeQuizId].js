@@ -90,7 +90,7 @@ const Manage = ({ id, activeQuizId }) => {
             )}
 
             <p>Total Questions: {questions.length}</p>
-            <p>Game link: play/{game.pin}</p>
+            <p>Game link: https://caboot-zeta.vercel.app/play/{game.pin}</p>
             {game.status === activeQuizStatuses.inProgress && nextQuestion() && (
                 <>
                     <h3>Next Question:</h3>

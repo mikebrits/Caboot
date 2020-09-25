@@ -19,13 +19,20 @@ export const activeQuizStatuses = {
     inQuestion: 'QUESTION',
 };
 
-const defaultActiveQuiz = () => ({
+export const newActiveQuiz = (title, pin) => ({
     status: activeQuizStatuses.waiting,
-    pin: Math.floor(Math.random() * 100000).toString(),
+    questionIndex: 0,
+    currentQuestion: '',
+    answers: [],
+    pin,
+    title,
 });
 
 export const createActiveQuiz = async (details = {}) => {
-    const quiz = { ...defaultActiveQuiz(), ...details };
+    const quiz = {
+        ...newActiveQuiz('', Math.floor(Math.random() * 100000).toString()),
+        ...details,
+    };
     const doc = await activeQuizCollectionRef().add(quiz);
     return {
         id: doc.id,
@@ -138,14 +145,7 @@ export const setCurrentQuestion = async (id, currentQuestionId, currentQuestion,
 };
 
 export const resetCurrentQuiz = async (id, game) => {
-    await activeQuizRef(id).set({
-        status: activeQuizStatuses.waiting,
-        questionIndex: 0,
-        currentQuestion: '',
-        answers: [],
-        pin: game.pin,
-        title: game.title,
-    });
+    await activeQuizRef(id).set(newActiveQuiz(game.title, game.pin));
     await batchUpdate(playersCollectionRef(id), { score: 0, streak: [], answers: [] });
 };
 
