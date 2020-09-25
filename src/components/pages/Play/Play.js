@@ -17,8 +17,9 @@ import {
 import { useRouter } from 'next/router';
 import Leaderboard from '../../Leaderboard';
 import Button from '@material-ui/core/Button';
+import TimeRemaining from '../../Countdown';
 
-export const QUESTION_DURATION = 10000;
+export const QUESTION_DURATION = 20000;
 
 const Play = ({ pin }) => {
     const [{ player, game }, loading, error] = useActiveQuizByPin(pin);
@@ -63,7 +64,6 @@ const Play = ({ pin }) => {
         setSubmittedAnswer(game.answers[answerId]);
         if (!hasAnswered()) {
             addAnswerToLocalPlayer(game.id, game.currentQuestionId, answerId);
-            setLocalQuestionTimer(game.id, null);
             const score = await answerQuestion(
                 game.id,
                 player.id,
@@ -72,6 +72,7 @@ const Play = ({ pin }) => {
                 getLocalQuestionTimer(game.id),
                 player.score,
             );
+            setLocalQuestionTimer(game.id, null);
             console.log(score);
         }
     };
@@ -138,6 +139,12 @@ const Play = ({ pin }) => {
                                 {answer.text}
                             </Button>
                         ))}
+                    {!hasAnswered() && (
+                        <TimeRemaining
+                            questionTime={QUESTION_DURATION}
+                            key={game.currentQuestionId}
+                        />
+                    )}
                     {game.showAnswers && (
                         <>
                             <h3 style={{ color: 'green' }}>{correctAnswer}</h3>

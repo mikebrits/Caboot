@@ -13,7 +13,7 @@ import Spinner from '../../../../src/components/Spinner';
 import { useQuestions, useQuiz, useStopQuiz } from '../../../../src/api/quizzes.api';
 import { usePlayers } from '../../../../src/api/players.api';
 import Button from '@material-ui/core/Button';
-import { QUESTION_DURATION } from '../../../../src/components/pages/Play/Play';
+// import { QUESTION_DURATION } from '../../../../src/components/pages/Play/Play';
 
 const Manage = ({ id, activeQuizId }) => {
     const [game, loading] = useActiveQuiz(activeQuizId);
@@ -37,7 +37,7 @@ const Manage = ({ id, activeQuizId }) => {
     const startTimer = () => {
         setTimeout(() => {
             setGetNext(true);
-        }, QUESTION_DURATION);
+        }, 5000);
     };
 
     const handleNextQuestion = async () => {
@@ -124,7 +124,16 @@ const Manage = ({ id, activeQuizId }) => {
                         players
                             .sort((a, b) => b.score - a.score)
                             .map((player) => (
-                                <li key={player.id}>
+                                <li
+                                    key={player.id}
+                                    style={{
+                                        color: player.answers.find(
+                                            (i) => i.questionId === game.currentQuestionId,
+                                        )
+                                            ? 'green'
+                                            : 'red',
+                                    }}
+                                >
                                     {player.name} - {player.score}
                                 </li>
                             ))}
