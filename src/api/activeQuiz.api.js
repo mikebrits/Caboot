@@ -132,16 +132,19 @@ export const setCurrentQuestion = async (id, currentQuestionId, currentQuestion,
         currentQuestionId,
         currentQuestion,
         answers,
+        showAnswers: false,
         currentQuestionStartedAt: firebase.firestore.FieldValue.serverTimestamp(),
     });
 };
 
-export const resetCurrentQuiz = async (id) => {
-    await activeQuizRef(id).update({
+export const resetCurrentQuiz = async (id, game) => {
+    await activeQuizRef(id).set({
         status: activeQuizStatuses.waiting,
         questionIndex: 0,
         currentQuestion: '',
         answers: [],
+        pin: game.pin,
+        title: game.title,
     });
     await batchUpdate(playersCollectionRef(id), { score: 0, streak: [], answers: [] });
 };
@@ -170,4 +173,15 @@ export const answerQuestion = async (
         }),
     });
     return score;
+};
+
+export const moveToNextQuestion = async (gameId, currentIndex, players) => {
+    const leaderboard = players
+        .map(({ name, score }) => ({ name, score }))
+        .sort((a, b) => b.score - a.score);
+    await activeQuizRef(gameId).update({
+        questionIndex: currentIndex + 1,
+        showAnswers: true,
+        leaderboard,
+    });
 };
