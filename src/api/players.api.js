@@ -7,12 +7,12 @@ export const playerRef = (gameId, playerId) => playersCollectionRef(gameId).doc(
 export const playerByNameRef = (gameId, name) =>
     playersCollectionRef(gameId).where('name', '==', name);
 
-const getNewPlayer = (name) => ({
+export const getNewPlayer = (name) => ({
     name,
     score: 0,
     streak: 0,
     answers: [],
-})
+});
 
 export const addPlayerToGame = async (gameId, name) => {
     const exists = (await playerByNameRef(gameId, name).get()).docs[0];

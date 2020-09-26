@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
 import { requiresAuth } from '../../../src/helpers/withAuth';
-import {
-    useAddQuestion,
-    useDeleteQuestion,
-    useQuestions,
-    useQuiz,
-    useSaveQuizQuestions,
-    useUpdateQuestionOrder,
-} from '../../../src/api/quizzes.api';
+import { useQuiz, useUpdateQuestionOrder } from '../../../src/api/quizzes.api';
 import Spinner from '../../../src/components/Spinner';
 import { toast } from 'react-toastify';
 import Button from '@material-ui/core/Button';
 import { BsPlusCircle } from 'react-icons/bs';
 import EditQuestionList from '../../../src/components/EditQuestionList';
+import {
+    useAddQuestion,
+    useDeleteQuestion,
+    useQuestions,
+    useSaveQuizQuestions,
+} from '../../../src/api/questions.api';
 
 function Quiz({ id }) {
     const [quiz, loading] = useQuiz(id);

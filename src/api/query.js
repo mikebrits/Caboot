@@ -17,12 +17,15 @@ export const useFirestore = (query, transform, listen = false) => {
             });
         };
         if (listen) {
-            query.onSnapshot(setData, (error) => {
+            const unsub = query.onSnapshot(setData, (error) => {
                 setState({
                     loading: false,
                     error,
                 });
             });
+            return () => {
+                unsub();
+            };
         } else {
             query
                 .get()

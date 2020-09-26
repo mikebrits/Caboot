@@ -1,7 +1,7 @@
 import { db } from '../config/firebase';
 import { useUser } from '../helpers/UserContext';
 import { batchUpdate, transformDoc, useRealtimeDoc } from './query';
-import { addPlayerToGame, playerRef, playersCollectionRef } from './players.api';
+import { addPlayerToGame, getNewPlayer, playerRef, playersCollectionRef } from './players.api';
 import { getPlayerForLocalGame, setLocalGame } from './localGameState';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
@@ -19,10 +19,13 @@ export const activeQuizStatuses = {
     inQuestion: 'QUESTION',
 };
 
-export const newActiveQuiz = (title, pin) => ({
+export const QUESTION_DURATION = 20000;
+
+export const getNewActiveQuiz = (title, pin) => ({
     status: activeQuizStatuses.waiting,
     questionIndex: 0,
     currentQuestion: '',
+    questionDuration: QUESTION_DURATION,
     answers: [],
     pin,
     title,
@@ -30,7 +33,7 @@ export const newActiveQuiz = (title, pin) => ({
 
 export const createActiveQuiz = async (details = {}) => {
     const quiz = {
-        ...newActiveQuiz('', Math.floor(Math.random() * 100000).toString()),
+        ...getNewActiveQuiz('', Math.floor(Math.random() * 100000).toString()),
         ...details,
     };
     const doc = await activeQuizCollectionRef().add(quiz);
@@ -153,8 +156,9 @@ export const setCurrentQuestion = async (id, currentQuestionId, currentQuestion,
 };
 
 export const resetCurrentQuiz = async (id, game) => {
-    await activeQuizRef(id).set(newActiveQuiz(game.title, game.pin));
-    await batchUpdate(playersCollectionRef(id), { score: 0, streak: [], answers: [] });
+    await activeQuizRef(id).set(getNewActiveQuiz(game.title, game.pin));
+    const { name, ...blankPlayer } = getNewPlayer('');
+    await batchUpdate(playersCollectionRef(id), blankPlayer);
 };
 
 export const answerQuestion = async (

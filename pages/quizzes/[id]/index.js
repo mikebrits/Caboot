@@ -1,6 +1,6 @@
 import React from 'react';
 import { requiresAuth } from '../../../src/helpers/withAuth';
-import { useDeleteQuiz, useQuestions, useQuiz } from '../../../src/api/quizzes.api';
+import { useDeleteQuiz, useQuiz } from '../../../src/api/quizzes.api';
 import Spinner from '../../../src/components/Spinner';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Button from '@material-ui/core/Button';
@@ -10,6 +10,7 @@ import List from '@material-ui/core/List';
 import QuestionListItem from '../../../src/components/QuestionListItem';
 import { BsPencil, BsPlay, BsTrash } from 'react-icons/bs/index';
 import Error from '../../../src/components/pages/Error';
+import { useQuestions } from '../../../src/api/questions.api';
 
 const useStyles = makeStyles((theme) => ({
     root: {

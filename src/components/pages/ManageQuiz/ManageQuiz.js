@@ -1,74 +1,81 @@
-import React, { useState } from 'react';
-import { requiresAuth } from '../../../../src/helpers/withAuth';
+import React, { useEffect, useState } from 'react';
+import { requiresAuth } from '../../../helpers/withAuth';
 import {
     activeQuizStatuses,
     moveToNextQuestion,
     resetCurrentQuiz,
     setCurrentQuestion,
     startActiveQuiz,
-    useActiveQuiz,
-} from '../../../../src/api/activeQuiz.api';
-import Spinner from '../../../../src/components/Spinner';
-import { useQuestions, useQuiz, useStopQuiz } from '../../../../src/api/quizzes.api';
-import { usePlayers } from '../../../../src/api/players.api';
+} from '../../../api/activeQuiz.api';
+import Spinner from '../../Spinner';
+import { useManageQuiz, useStopQuiz } from '../../../api/quizzes.api';
 import Button from '@material-ui/core/Button';
-import Error from '../../../../src/components/pages/Error';
-// import { QUESTION_DURATION } from '../../../../src/components/pages/Play/Play';
+import Error from '../Error';
 
-const Manage = ({ id, activeQuizId }) => {
-    const [game, loading] = useActiveQuiz(activeQuizId);
-    const [quiz, quizLoading] = useQuiz(id);
-    const [questions, questionsLoading] = useQuestions(id);
-    const [players] = usePlayers(activeQuizId);
-    const [canAsk, setCanAsk] = useState(true);
-    const [getNext, setGetNext] = useState(true);
+const Manage = ({ quizId, gameId }) => {
+    const [{ players, game, quiz, questions }, loading, error] = useManageQuiz(quizId, gameId);
+    const [canAsk, setCanAsk] = useState(false);
     const stopQuiz = useStopQuiz();
+
+    useEffect(() => {
+        // if game started and all players answered
+        // set game state to all players answered
+    }, [players]);
 
     const orderedQuestions = () =>
         quiz.questionOrder.map((id) => questions.find((i) => i.id === id));
     const nextQuestion = () => orderedQuestions()[game.questionIndex];
 
     const handleStart = async () => {
-        await startActiveQuiz(activeQuizId);
+        await startActiveQuiz(gameId);
         setCanAsk(true);
-        setGetNext(false);
     };
 
     const startTimer = () => {
-        setTimeout(() => {
-            setGetNext(true);
-        }, 5000);
+        setTimeout(() => {}, 5000);
     };
 
     const handleNextQuestion = async () => {
-        setGetNext(false);
         setCanAsk(true);
         await moveToNextQuestion(game.id, game.questionIndex, players);
     };
 
     const askQuestion = async () => {
         setCanAsk(false);
-        setGetNext(false);
         const question = nextQuestion();
-        await setCurrentQuestion(activeQuizId, question.id, question.text, question.answers);
+        await setCurrentQuestion(gameId, question.id, question.text, question.answers);
         startTimer();
+    };
+
+    const playerHasAnsweredQuestion = (playerId, questionId) => {
+        const player = players.find((i) => i.id === playerId);
+        return !!player.answers.find((i) => i.questionId === questionId);
+    };
+
+    const playerHasAnsweredCurrentQuestion = (playerId) => {
+        return !!playerHasAnsweredQuestion(playerId, game.currentQuestionId);
+    };
+
+    const allPlayersAnswered = () => {
+        return players.every((p) => p.answers.find((i) => i.questionId === game.currentQuestionId));
     };
 
     const handleEndGame = async () => {
         await stopQuiz(quiz);
     };
 
-    if (loading || quizLoading || questionsLoading) return <Spinner />;
+    if (loading) return <Spinner />;
 
-    if (!game || !quiz) return <Error title={'No Quiz Found'} />;
-    if (quiz.activeQuiz !== activeQuizId) return <Error title={'Quizzes dont match'} />;
+    if (error) return <Error title={'Error'} text={error} />;
+    if (quiz.activeQuiz !== gameId) return <Error title={'Quizzes dont match'} />;
+
     return (
         <>
             <h1>Manage Game: {quiz.title}</h1>
             <Button
                 color="primary"
                 variant="contained"
-                onClick={() => resetCurrentQuiz(activeQuizId, game)}
+                onClick={() => resetCurrentQuiz(gameId, game)}
             >
                 Reset Game
             </Button>
@@ -85,9 +92,9 @@ const Manage = ({ id, activeQuizId }) => {
                 <>
                     <h3>Next Question:</h3>
                     {nextQuestion().text}
-                    {getNext && (
+                    {!canAsk && allPlayersAnswered() && (
                         <Button color="primary" variant="contained" onClick={handleNextQuestion}>
-                            Next Question / Show Leaderboard
+                            Show Leaderboard
                         </Button>
                     )}
                     {canAsk && (
@@ -117,9 +124,7 @@ const Manage = ({ id, activeQuizId }) => {
                                 <li
                                     key={player.id}
                                     style={{
-                                        color: player.answers.find(
-                                            (i) => i.questionId === game.currentQuestionId,
-                                        )
+                                        color: playerHasAnsweredCurrentQuestion(player.id)
                                             ? 'green'
                                             : 'red',
                                     }}
@@ -132,14 +137,5 @@ const Manage = ({ id, activeQuizId }) => {
         </>
     );
 };
-
-export async function getServerSideProps(context) {
-    return {
-        props: {
-            id: context.params.id,
-            activeQuizId: context.params.activeQuizId,
-        },
-    };
-}
 
 export default requiresAuth(Manage);

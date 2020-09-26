@@ -10,8 +10,6 @@ import {
 } from '../../../api/localGameState';
 import { answerQuestion } from '../../../api/activeQuiz.api';
 
-export const QUESTION_DURATION = 20000;
-
 const AnsweringQuestion = ({ game, player }) => {
     const [answers, setAnswers] = useState(null);
     const [submittedAnswer, setSubmittedAnswer] = useState('');
@@ -21,12 +19,12 @@ const AnsweringQuestion = ({ game, player }) => {
     useEffect(() => {
         if (game.currentQuestionId && !hasAnswered()) {
             const time = new Date().getTime();
-            let timeRemaining = QUESTION_DURATION;
+            let timeRemaining = game.questionDuration;
             const localTimer = getLocalQuestionTimer(game.id);
             if (!localTimer) {
                 setLocalQuestionTimer(game.id, time);
             } else {
-                timeRemaining = QUESTION_DURATION - (time - localTimer);
+                timeRemaining = game.questionDuration - (time - localTimer);
             }
 
             setTimeout(() => {
@@ -96,7 +94,7 @@ const AnsweringQuestion = ({ game, player }) => {
                         ))}
                     {!hasAnswered() && (
                         <TimeRemaining
-                            questionTime={QUESTION_DURATION}
+                            questionTime={game.questionDuration}
                             key={game.currentQuestionId}
                         />
                     )}
