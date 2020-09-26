@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { requiresAuth } from '../../../src/helpers/withAuth';
-import { Page } from '../../../src/components/Page';
 import {
     useAddQuestion,
     useDeleteQuestion,
@@ -70,7 +69,7 @@ function Quiz({ id }) {
     });
 
     return (
-        <Page>
+        <>
             <h1>{quiz.title}</h1>
 
             <EditQuestionList
@@ -100,7 +99,7 @@ function Quiz({ id }) {
             >
                 Save Quiz
             </Button>
-        </Page>
+        </>
     );
 }
 

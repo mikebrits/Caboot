@@ -9,12 +9,12 @@ const Leaderboard = ({ player, leaderboard, over = false }) => {
     return (
         <>
             <h2>
-                You {over ? '' : 'are'} placed {place + nth(place)}
+                You {over ? 'placed' : 'are'} {place + nth(place)}
             </h2>
             <h2>Leaderboard</h2>
             <ul>
                 {leaderboard?.map(({ name, score }, key) => (
-                    <li key={key}>
+                    <li key={key} style={{ fontWeight: name === player.name ? 'bold' : 'normal' }}>
                         {name} - {score}
                     </li>
                 ))}

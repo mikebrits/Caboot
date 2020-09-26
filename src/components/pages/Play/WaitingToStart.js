@@ -1,9 +1,12 @@
 import React from 'react';
 
-const WaitingToStart = () => {
+const WaitingToStart = ({ game, player }) => {
     return (
         <>
-            <h1>Waiting To Start</h1>
+            <h1>Hey there {player.name}!</h1>
+            <p>
+                Waiting for the Quiz Master to start the game <b>{game.title}</b>
+            </p>
         </>
     );
 };

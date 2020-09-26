@@ -3,7 +3,6 @@ import React from 'react';
 import * as firebase from 'firebase';
 import { auth } from '../src/config/firebase';
 import { useUser } from '../src/helpers/UserContext';
-import { Page } from '../src/components/Page';
 import { CardContent } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -21,21 +20,21 @@ export default function Login() {
     const { user } = useUser();
     if (user) {
         return (
-            <Page>
+            <>
                 <Button variant="contained" onClick={() => auth.signOut()}>
                     Sign Out
                 </Button>
-            </Page>
+            </>
         );
     }
     return (
-        <Page>
+        <>
             <Card variant="outlined">
                 <CardContent>
                     <h2>Please sign-in:</h2>
                     <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />
                 </CardContent>
             </Card>
-        </Page>
+        </>
     );
 }

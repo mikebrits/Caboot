@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Page } from '../../../../src/components/Page';
 import { requiresAuth } from '../../../../src/helpers/withAuth';
 import {
     activeQuizStatuses,
@@ -13,6 +12,7 @@ import Spinner from '../../../../src/components/Spinner';
 import { useQuestions, useQuiz, useStopQuiz } from '../../../../src/api/quizzes.api';
 import { usePlayers } from '../../../../src/api/players.api';
 import Button from '@material-ui/core/Button';
+import Error from '../../../../src/components/pages/Error';
 // import { QUESTION_DURATION } from '../../../../src/components/pages/Play/Play';
 
 const Manage = ({ id, activeQuizId }) => {
@@ -60,20 +60,10 @@ const Manage = ({ id, activeQuizId }) => {
 
     if (loading || quizLoading || questionsLoading) return <Spinner />;
 
-    if (!game || !quiz)
-        return (
-            <Page>
-                <h1>No Quiz found</h1>
-            </Page>
-        );
-    if (quiz.activeQuiz !== activeQuizId)
-        return (
-            <Page>
-                <h1>Quizzes Dont Match</h1>
-            </Page>
-        );
+    if (!game || !quiz) return <Error title={'No Quiz Found'} />;
+    if (quiz.activeQuiz !== activeQuizId) return <Error title={'Quizzes dont match'} />;
     return (
-        <Page>
+        <>
             <h1>Manage Game: {quiz.title}</h1>
             <Button
                 color="primary"
@@ -139,7 +129,7 @@ const Manage = ({ id, activeQuizId }) => {
                             ))}
                 </ul>
             </div>
-        </Page>
+        </>
     );
 };
 

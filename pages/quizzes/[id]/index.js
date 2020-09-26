@@ -1,6 +1,5 @@
 import React from 'react';
 import { requiresAuth } from '../../../src/helpers/withAuth';
-import { Page } from '../../../src/components/Page';
 import { useDeleteQuiz, useQuestions, useQuiz } from '../../../src/api/quizzes.api';
 import Spinner from '../../../src/components/Spinner';
 import makeStyles from '@material-ui/core/styles/makeStyles';
@@ -10,6 +9,7 @@ import { useRouter } from 'next/router';
 import List from '@material-ui/core/List';
 import QuestionListItem from '../../../src/components/QuestionListItem';
 import { BsPencil, BsPlay, BsTrash } from 'react-icons/bs/index';
+import Error from '../../../src/components/pages/Error';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -38,15 +38,10 @@ function Quiz({ id }) {
 
     if (loading || questionsLoading) return <Spinner />;
 
-    if (!quiz)
-        return (
-            <Page>
-                <h1>Quiz not found</h1>
-            </Page>
-        );
+    if (!quiz) return <Error title={'Quiz not found'} />;
 
     return (
-        <Page>
+        <div>
             <div className={classes.header}>
                 <h1>{quiz.title}</h1>
                 <div className={classes.root}>
@@ -74,7 +69,7 @@ function Quiz({ id }) {
                     .map((id) => questions.find((i) => i.id === id))
                     .map((item) => item && <QuestionListItem key={item.id} question={item} />)}
             </List>
-        </Page>
+        </div>
     );
 }
 

@@ -73,6 +73,10 @@ export const useActiveQuizByPin = (pin) => {
     const getPlayerAndGameSnapshots = (playerId, gameId) => {
         playerRef(gameId, playerId).onSnapshot(
             (data) => {
+                if (!data.exists) {
+                    setError('Player does not exist');
+                    return;
+                }
                 setPlayer(transformDoc(data));
                 setPlayerLoading(false);
             },
@@ -83,6 +87,10 @@ export const useActiveQuizByPin = (pin) => {
         );
         activeQuizRef(gameId).onSnapshot(
             (data) => {
+                if (!data.exists) {
+                    setError('Game does not exist');
+                    return;
+                }
                 setGame(transformDoc(data));
                 setGameLoading(false);
             },

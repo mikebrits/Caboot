@@ -1,5 +1,4 @@
 import Head from 'next/head';
-import { Page } from '../src/components/Page';
 import React, { useState } from 'react';
 import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
@@ -45,7 +44,7 @@ export default function Home() {
         }
     };
     return (
-        <Page>
+        <>
             <div>
                 <Head>
                     <title>Caboot</title>
@@ -78,6 +77,6 @@ export default function Home() {
                 </Paper>
                 {error && <p>{error.toString()}</p>}
             </div>
-        </Page>
+        </>
     );
 }

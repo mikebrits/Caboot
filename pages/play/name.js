@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Page } from '../../src/components/Page';
 import { useRouter } from 'next/router';
 import Button from '@material-ui/core/Button';
 import { joinGame } from '../../src/api/activeQuiz.api';
 import { toast } from 'react-toastify';
-import { uniqueNamesGenerator, adjectives, animals } from 'unique-names-generator';
+import { adjectives, animals, uniqueNamesGenerator } from 'unique-names-generator';
 import { BsArrowClockwise, BsPlay } from 'react-icons/bs';
 
 const getName = () => {
@@ -32,7 +31,7 @@ const Name = ({ pin }) => {
         router.push('/');
     }
     return (
-        <Page>
+        <>
             <h1>Please Select a Name</h1>
             <h2>{name}</h2>
             <Button
@@ -52,7 +51,7 @@ const Name = ({ pin }) => {
             >
                 Play Game!
             </Button>
-        </Page>
+        </>
     );
 };
 

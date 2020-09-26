@@ -1,7 +1,6 @@
 import { requiresAuth } from '../../src/helpers/withAuth';
 import { useAllQuizzes, useDeleteQuiz, useStartQuiz } from '../../src/api/quizzes.api';
 import React from 'react';
-import { Page } from '../../src/components/Page';
 import Spinner from '../../src/components/Spinner';
 import Link from 'next/link';
 import NewQuiz from '../../src/components/NewQuiz';
@@ -12,6 +11,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
 import { BsGear, BsPencil, BsPlay, BsTrash } from 'react-icons/bs';
 import { toast } from 'react-toastify';
+import Error from '../../src/components/pages/Error';
 
 function Quizzes() {
     const [quizzes, loading, error] = useAllQuizzes();
@@ -29,13 +29,10 @@ function Quizzes() {
     if (loading) return <Spinner />;
     if (error)
         return (
-            <Page>
-                <h1>Error</h1>
-                <p>You probably don't have permission to view this page</p>
-            </Page>
+            <Error title={'Error'} text={'You probably dont have permission to view this page'} />
         );
     return (
-        <Page>
+        <>
             <List>
                 {quizzes.map((quiz) => {
                     return (
@@ -78,7 +75,7 @@ function Quizzes() {
                 })}
             </List>
             <NewQuiz />
-        </Page>
+        </>
     );
 }
 
