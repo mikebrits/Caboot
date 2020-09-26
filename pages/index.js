@@ -6,7 +6,7 @@ import InputBase from '@material-ui/core/InputBase';
 import { BsPlay } from 'react-icons/bs';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { useRouter } from 'next/router';
-import { getGameByPin } from '../src/api/activeQuiz.api';
+import { getGameByPin } from '../src/api/game.api';
 
 const useStyles = makeStyles((theme) => ({
     root: {

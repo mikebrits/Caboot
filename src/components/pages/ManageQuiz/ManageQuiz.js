@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { requiresAuth } from '../../../helpers/withAuth';
 import {
-    activeQuizStatuses,
+    gameStatuses,
     moveToNextQuestion,
     resetCurrentQuiz,
     setCurrentQuestion,
-    startActiveQuiz,
-} from '../../../api/activeQuiz.api';
+    startGame,
+} from '../../../api/game.api';
 import Spinner from '../../Spinner';
 import { useManageQuiz, useStopQuiz } from '../../../api/quizzes.api';
 import Button from '@material-ui/core/Button';
@@ -27,7 +27,7 @@ const Manage = ({ quizId, gameId }) => {
     const nextQuestion = () => orderedQuestions()[game.questionIndex];
 
     const handleStart = async () => {
-        await startActiveQuiz(gameId);
+        await startGame(gameId);
         setCanAsk(true);
     };
 
@@ -67,7 +67,7 @@ const Manage = ({ quizId, gameId }) => {
     if (loading) return <Spinner />;
 
     if (error) return <Error title={'Error'} text={error} />;
-    if (quiz.activeQuiz !== gameId) return <Error title={'Quizzes dont match'} />;
+    if (quiz.game !== gameId) return <Error title={'Quizzes dont match'} />;
 
     return (
         <>
@@ -80,7 +80,7 @@ const Manage = ({ quizId, gameId }) => {
                 Reset Game
             </Button>
             <p>Current State: {game.status}</p>
-            {game.status === activeQuizStatuses.waiting && (
+            {game.status === gameStatuses.waiting && (
                 <Button color="primary" variant="contained" onClick={handleStart}>
                     Start Game
                 </Button>
@@ -88,7 +88,7 @@ const Manage = ({ quizId, gameId }) => {
 
             <p>Total Questions: {questions.length}</p>
             <p>Game link: https://caboot-zeta.vercel.app/play/{game.pin}</p>
-            {game.status === activeQuizStatuses.inProgress && nextQuestion() && (
+            {game.status === gameStatuses.inProgress && nextQuestion() && (
                 <>
                     <h3>Next Question:</h3>
                     {nextQuestion().text}

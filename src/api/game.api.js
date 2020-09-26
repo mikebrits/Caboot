@@ -7,11 +7,11 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import * as firebase from 'firebase';
 
-export const activeQuizCollectionRef = () => db.collection('active-quizzes');
-export const activeQuizRef = (id) => activeQuizCollectionRef().doc(id);
-export const activeQuizByPin = (pin) => activeQuizCollectionRef().where('pin', '==', pin);
+export const gameCollectionRef = () => db.collection('active-quizzes');
+export const gameRef = (id) => gameCollectionRef().doc(id);
+export const gameByPin = (pin) => gameCollectionRef().where('pin', '==', pin);
 
-export const activeQuizStatuses = {
+export const gameStatuses = {
     inProgress: 'IN_PROGRESS',
     ended: 'ENDED',
     waiting: 'WAITING',
@@ -21,8 +21,8 @@ export const activeQuizStatuses = {
 
 export const QUESTION_DURATION = 20000;
 
-export const getNewActiveQuiz = (title, pin) => ({
-    status: activeQuizStatuses.waiting,
+export const getNewGame = (title, pin) => ({
+    status: gameStatuses.waiting,
     questionIndex: 0,
     currentQuestion: '',
     questionDuration: QUESTION_DURATION,
@@ -31,40 +31,40 @@ export const getNewActiveQuiz = (title, pin) => ({
     title,
 });
 
-export const createActiveQuiz = async (details = {}) => {
+export const createGame = async (details = {}) => {
     const quiz = {
-        ...getNewActiveQuiz('', Math.floor(Math.random() * 100000).toString()),
+        ...getNewGame('', Math.floor(Math.random() * 100000).toString()),
         ...details,
     };
-    const doc = await activeQuizCollectionRef().add(quiz);
+    const doc = await gameCollectionRef().add(quiz);
     return {
         id: doc.id,
         ...quiz,
     };
 };
 
-export const useActiveQuiz = (id) => {
-    return useRealtimeDoc(activeQuizRef(id));
+export const useGame = (id) => {
+    return useRealtimeDoc(gameRef(id));
 };
 
-export const useCreateActiveQuiz = () => {
+export const useCreateGame = () => {
     const { user } = useUser();
-    return async (details) => createActiveQuiz({ owner: user.uid, ...details });
+    return async (details) => createGame({ owner: user.uid, ...details });
 };
 
-export const updateActiveQuiz = async (id, data) => {
-    await activeQuizRef(id).update(data);
+export const updateGame = async (id, data) => {
+    await gameRef(id).update(data);
 };
 
-export const startActiveQuiz = async (id) => {
-    await updateActiveQuiz(id, { status: activeQuizStatuses.inProgress, questionIndex: 0 });
+export const startGame = async (id) => {
+    await updateGame(id, { status: gameStatuses.inProgress, questionIndex: 0 });
 };
 
-export const endActiveQuiz = async (id) => {
-    await updateActiveQuiz(id, { status: activeQuizStatuses.ended });
+export const endGame = async (id) => {
+    await updateGame(id, { status: gameStatuses.ended });
 };
 
-export const useActiveQuizByPin = (pin) => {
+export const useGameByPin = (pin) => {
     const [error, setError] = useState('');
     const [game, setGame] = useState({});
     const [player, setPlayer] = useState({});
@@ -88,7 +88,7 @@ export const useActiveQuizByPin = (pin) => {
                 setPlayerLoading(false);
             },
         );
-        activeQuizRef(gameId).onSnapshot(
+        gameRef(gameId).onSnapshot(
             (data) => {
                 if (!data.exists) {
                     setError('Game does not exist');
@@ -121,7 +121,7 @@ export const useActiveQuizByPin = (pin) => {
 };
 
 export const getGameByPin = async (pin) => {
-    const games = await activeQuizByPin(pin).get();
+    const games = await gameByPin(pin).get();
     const game = games.docs[0];
     if (!game || !game.exists) {
         throw new Error('Game not found');
@@ -137,7 +137,7 @@ export const joinGame = async (pin, name) => {
     if (getPlayerForLocalGame(game.id)) {
         throw new Error(`You have already joined this game`);
     }
-    if (game.status !== activeQuizStatuses.waiting) {
+    if (game.status !== gameStatuses.waiting) {
         throw new Error('This game is not currently accepting new players');
     }
     const player = await addPlayerToGame(game.id, name);
@@ -146,7 +146,7 @@ export const joinGame = async (pin, name) => {
 };
 
 export const setCurrentQuestion = async (id, currentQuestionId, currentQuestion, answers) => {
-    await activeQuizRef(id).update({
+    await gameRef(id).update({
         currentQuestionId,
         currentQuestion,
         answers,
@@ -156,7 +156,7 @@ export const setCurrentQuestion = async (id, currentQuestionId, currentQuestion,
 };
 
 export const resetCurrentQuiz = async (id, game) => {
-    await activeQuizRef(id).set(getNewActiveQuiz(game.title, game.pin));
+    await gameRef(id).set(getNewGame(game.title, game.pin));
     const { name, ...blankPlayer } = getNewPlayer('');
     await batchUpdate(playersCollectionRef(id), blankPlayer);
 };
@@ -191,7 +191,7 @@ export const moveToNextQuestion = async (gameId, currentIndex, players) => {
     const leaderboard = players
         .map(({ name, score }) => ({ name, score }))
         .sort((a, b) => b.score - a.score);
-    await activeQuizRef(gameId).update({
+    await gameRef(gameId).update({
         questionIndex: currentIndex + 1,
         showAnswers: true,
         leaderboard,

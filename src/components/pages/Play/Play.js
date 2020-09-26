@@ -1,6 +1,6 @@
 import Error from '../Error';
 import React from 'react';
-import { activeQuizStatuses, useActiveQuizByPin } from '../../../api/activeQuiz.api';
+import { gameStatuses, useGameByPin } from '../../../api/game.api';
 import Spinner from '../../Spinner';
 import { getPlayerForLocalGame } from '../../../api/localGameState';
 import { useRouter } from 'next/router';
@@ -9,14 +9,14 @@ import WaitingToStart from './WaitingToStart';
 import AnsweringQuestion from './AnsweringQuestion';
 
 const stateMap = {
-    [activeQuizStatuses.ended]: Ended,
-    [activeQuizStatuses.waiting]: WaitingToStart,
-    [activeQuizStatuses.inProgress]: AnsweringQuestion,
+    [gameStatuses.ended]: Ended,
+    [gameStatuses.waiting]: WaitingToStart,
+    [gameStatuses.inProgress]: AnsweringQuestion,
     default: AnsweringQuestion,
 };
 
 const Play = ({ pin }) => {
-    const [{ player, game }, loading, error] = useActiveQuizByPin(pin);
+    const [{ player, game }, loading, error] = useGameByPin(pin);
     const router = useRouter();
 
     if (error) {

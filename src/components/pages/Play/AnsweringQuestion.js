@@ -8,7 +8,7 @@ import {
     hasPlayerAnsweredQuestion,
     setLocalQuestionTimer,
 } from '../../../api/localGameState';
-import { answerQuestion } from '../../../api/activeQuiz.api';
+import { answerQuestion } from '../../../api/game.api';
 
 const AnsweringQuestion = ({ game, player }) => {
     const [answers, setAnswers] = useState(null);

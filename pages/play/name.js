@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Button from '@material-ui/core/Button';
-import { joinGame } from '../../src/api/activeQuiz.api';
+import { joinGame } from '../../src/api/game.api';
 import { toast } from 'react-toastify';
 import { adjectives, animals, uniqueNamesGenerator } from 'unique-names-generator';
 import { BsArrowClockwise, BsPlay } from 'react-icons/bs';

@@ -1,6 +1,6 @@
 import { useRealtimeCollection, useRealtimeDoc } from './query';
 import { useUser } from '../helpers/UserContext';
-import { activeQuizRef, createActiveQuiz, endActiveQuiz } from './activeQuiz.api';
+import { gameRef, createGame, endGame } from './game.api';
 import { playersCollectionRef } from './players.api';
 import { userRef } from './users.api';
 import { questionCollectionRef } from './questions.api';
@@ -54,13 +54,13 @@ export const useDeleteQuiz = () => {
 export const useStartQuiz = () => {
     const { user } = useUser();
     return async (quiz) => {
-        const activeQuiz = await createActiveQuiz({
+        const game = await createGame({
             owner: user.uid,
             quiz: quiz.id,
             title: quiz.title,
         });
         await quizRef(user.uid, quiz.id).update({
-            activeQuiz: activeQuiz.id,
+            game: game.id,
             status: QuizStatuses.waiting,
         });
     };
@@ -69,10 +69,10 @@ export const useStartQuiz = () => {
 export const useStopQuiz = () => {
     const { user } = useUser();
     return async (quiz) => {
-        await endActiveQuiz(quiz.activeQuiz);
+        await endGame(quiz.game);
         await quizRef(user.uid, quiz.id).update({
             status: QuizStatuses.idle,
-            activeQuiz: '',
+            game: '',
         });
     };
 };
@@ -80,7 +80,7 @@ export const useStopQuiz = () => {
 export const useManageQuiz = (quizId, gameId) => {
     const { user } = useUser();
     const [quiz, quizLoading, quizError] = useRealtimeDoc(quizRef(user.uid, quizId));
-    const [game, gameLoading, gameError] = useRealtimeDoc(activeQuizRef(gameId));
+    const [game, gameLoading, gameError] = useRealtimeDoc(gameRef(gameId));
     const [players, playersLoading, playersError] = useRealtimeCollection(
         playersCollectionRef(gameId),
     );

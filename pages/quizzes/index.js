@@ -42,7 +42,7 @@ function Quizzes() {
                             </ListItemText>
                             <ListItemSecondaryAction>
                                 {quiz.status === 'WAITING' || quiz.status === 'IN_PROGRESS' ? (
-                                    <Link href={`/quizzes/${quiz.id}/manage/${quiz.activeQuiz}`}>
+                                    <Link href={`/quizzes/${quiz.id}/manage/${quiz.game}`}>
                                         <IconButton size={'small'}>
                                             <BsGear />
                                         </IconButton>

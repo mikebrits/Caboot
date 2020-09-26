@@ -1,8 +1,8 @@
 //import {db} from "../config/firebase";
-import { activeQuizRef } from './activeQuiz.api';
+import { gameRef } from './game.api';
 import { useRealtimeCollection } from './query';
 
-export const playersCollectionRef = (gameId) => activeQuizRef(gameId).collection('players');
+export const playersCollectionRef = (gameId) => gameRef(gameId).collection('players');
 export const playerRef = (gameId, playerId) => playersCollectionRef(gameId).doc(playerId);
 export const playerByNameRef = (gameId, name) =>
     playersCollectionRef(gameId).where('name', '==', name);
