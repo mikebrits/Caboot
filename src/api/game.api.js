@@ -18,6 +18,7 @@ export const gameStatuses = {
     allAnswered: 'ALL_ANSWERED',
     showAnswer: 'SHOW_ANSWER',
     showLeaderboard: 'SHOW_LEADERBOARD',
+    questionsFinished: 'QUESTIONS_FINISHED',
     ended: 'ENDED',
 };
 
@@ -156,7 +157,7 @@ export const setCurrentQuestion = async (id, currentQuestionId, currentQuestion,
         currentQuestionId,
         currentQuestion,
         answers,
-        showAnswers: false,
+        status: gameStatuses.answeringQuestion,
         currentQuestionStartedAt: firebase.firestore.FieldValue.serverTimestamp(),
     });
 };
@@ -193,20 +194,19 @@ export const answerQuestion = async (
     return score;
 };
 
-export const showLeaderboard = async (gameId, players) => {
+export const showLeaderboard = async (game, players) => {
     const leaderboard = players
         .map(({ name, score }) => ({ name, score }))
         .sort((a, b) => b.score - a.score);
-    await gameRef(gameId).update({
+    await gameRef(game.id).update({
         status: gameStatuses.showLeaderboard,
+        questionIndex: game.questionIndex + 1,
         leaderboard,
     });
 };
 
 export const moveToNextQuestion = async (gameId, currentIndex) => {
     await gameRef(gameId).update({
-        status: gameStatuses.answeringQuestion,
         questionIndex: currentIndex + 1,
-        showAnswers: true,
     });
 };

@@ -9,7 +9,7 @@ import { answerQuestion } from '../../../api/game.api';
 import Button from '@material-ui/core/Button';
 import { usePlayerCurrentAnswer } from '../../../api/players.api';
 
-const AnswerButtons = ({ onSubmitAnswer, answers, game, player }) => {
+const AnswerButtons = ({ onSubmitAnswer = () => {}, answers, game, player }) => {
     const hasAnswered = () => hasPlayerAnsweredQuestion(game.id, game.currentQuestionId);
     const [answer, setAnswer] = usePlayerCurrentAnswer(game, player);
 

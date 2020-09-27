@@ -88,9 +88,18 @@ export const useManageQuiz = (quizId, gameId) => {
         questionCollectionRef(user.uid, quizId),
     );
 
+    const loading = playersLoading || gameLoading || quizLoading || questionsLoading;
+    const error = quizError || gameError || playersError || questionsError;
+
+    const orderedQuestions = () =>
+        quiz && questions && quiz.questionOrder.map((id) => questions.find((i) => i.id === id));
+
+    const nextQuestion = () => questions && game && orderedQuestions()[game.questionIndex];
+
+    // console.log({ players, game, quiz, questions });
     return [
-        { players, game, quiz, questions },
-        playersLoading || gameLoading || quizLoading || questionsLoading,
-        quizError || gameError || playersError || questionsError,
+        { players, game, quiz, questions: orderedQuestions(), nextQuestion: nextQuestion() },
+        loading,
+        error,
     ];
 };

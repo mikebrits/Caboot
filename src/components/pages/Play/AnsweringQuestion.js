@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import TimeRemaining from '../../Countdown';
-import Leaderboard from '../../Leaderboard';
 import {
     getLocalQuestionTimer,
     hasPlayerAnsweredQuestion,
@@ -36,6 +35,7 @@ const AnsweringQuestion = ({ game, player }) => {
     }, [game.currentQuestion]);
 
     useEffect(() => {
+        console.log({ game });
         if (game.answers) {
             setAnswers(
                 game.answers
@@ -88,12 +88,6 @@ const AnsweringQuestion = ({ game, player }) => {
                             questionTime={game.questionDuration}
                             key={game.currentQuestionId}
                         />
-                    )}
-                    {game.status === gameStatuses.showLeaderboard && (
-                        <>
-                            <p>Your score: {player.score}</p>
-                            <Leaderboard leaderboard={game.leaderboard} player={player} />
-                        </>
                     )}
                 </>
             )}

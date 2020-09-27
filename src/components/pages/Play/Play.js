@@ -8,6 +8,7 @@ import Ended from './Ended';
 import LobbyOpen from './LobbyOpen';
 import AnsweringQuestion from './AnsweringQuestion';
 import LobbyClosed from './LobbyClosed';
+import Leaderboard from '../../Leaderboard';
 
 const stateMap = {
     [gameStatuses.ended]: Ended,
@@ -15,6 +16,8 @@ const stateMap = {
     [gameStatuses.lobbyClosed]: LobbyClosed,
     [gameStatuses.answeringQuestion]: AnsweringQuestion,
     [gameStatuses.allAnswered]: AnsweringQuestion,
+    [gameStatuses.showLeaderboard]: Leaderboard,
+    [gameStatuses.questionsFinished]: Leaderboard,
     default: AnsweringQuestion,
 };
 
