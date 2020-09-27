@@ -5,7 +5,7 @@ function nth(n) {
 }
 
 const Leaderboard = ({ player, leaderboard, over = false }) => {
-    const place = leaderboard.findIndex((item) => item.name === player.name) + 1;
+    const place = leaderboard?.findIndex((item) => item.name === player.name) + 1;
     return (
         <>
             <h2>

@@ -1,25 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { requiresAuth } from '../../../helpers/withAuth';
 import {
     gameStatuses,
     moveToNextQuestion,
     resetCurrentQuiz,
     setCurrentQuestion,
+    setGameStatus,
+    showLeaderboard,
     startGame,
 } from '../../../api/game.api';
 import Spinner from '../../Spinner';
 import { useManageQuiz, useStopQuiz } from '../../../api/quizzes.api';
 import Button from '@material-ui/core/Button';
 import Error from '../Error';
+import PlayerManager from './PlayerManager';
 
 const Manage = ({ quizId, gameId }) => {
     const [{ players, game, quiz, questions }, loading, error] = useManageQuiz(quizId, gameId);
-    const [canAsk, setCanAsk] = useState(false);
     const stopQuiz = useStopQuiz();
 
     useEffect(() => {
-        // if game started and all players answered
-        // set game state to all players answered
+        if (!loading && game.status === gameStatuses.answeringQuestion && allPlayersAnswered()) {
+            setGameStatus(gameId, gameStatuses.allAnswered);
+        }
     }, [players]);
 
     const orderedQuestions = () =>
@@ -28,32 +31,26 @@ const Manage = ({ quizId, gameId }) => {
 
     const handleStart = async () => {
         await startGame(gameId);
-        setCanAsk(true);
     };
 
-    const startTimer = () => {
-        setTimeout(() => {}, 5000);
+    const handleShowAnswer = async () => {
+        await setGameStatus(gameId, gameStatuses.showAnswer);
+    };
+
+    const handleShowLeaderBoard = async () => {
+        await showLeaderboard(gameId, players);
     };
 
     const handleNextQuestion = async () => {
-        setCanAsk(true);
         await moveToNextQuestion(game.id, game.questionIndex, players);
     };
 
     const askQuestion = async () => {
-        setCanAsk(false);
+        if (game.status === gameStatuses.lobbyClosed) {
+            await setGameStatus(game.id, gameStatuses.answeringQuestion);
+        }
         const question = nextQuestion();
         await setCurrentQuestion(gameId, question.id, question.text, question.answers);
-        startTimer();
-    };
-
-    const playerHasAnsweredQuestion = (playerId, questionId) => {
-        const player = players.find((i) => i.id === playerId);
-        return !!player.answers.find((i) => i.questionId === questionId);
-    };
-
-    const playerHasAnsweredCurrentQuestion = (playerId) => {
-        return !!playerHasAnsweredQuestion(playerId, game.currentQuestionId);
     };
 
     const allPlayersAnswered = () => {
@@ -80,28 +77,43 @@ const Manage = ({ quizId, gameId }) => {
                 Reset Game
             </Button>
             <p>Current State: {game.status}</p>
-            {game.status === gameStatuses.waiting && (
+            {game.status === gameStatuses.lobbyOpen && (
                 <Button color="primary" variant="contained" onClick={handleStart}>
-                    Start Game
+                    Close Lobby
                 </Button>
             )}
 
             <p>Total Questions: {questions.length}</p>
             <p>Game link: https://caboot-zeta.vercel.app/play/{game.pin}</p>
-            {game.status === gameStatuses.inProgress && nextQuestion() && (
+            {nextQuestion() && (
                 <>
                     <h3>Next Question:</h3>
                     {nextQuestion().text}
-                    {!canAsk && allPlayersAnswered() && (
-                        <Button color="primary" variant="contained" onClick={handleNextQuestion}>
+
+                    {game.status === gameStatuses.allAnswered && (
+                        <Button color="primary" variant="contained" onClick={handleShowAnswer}>
+                            Show Answer
+                        </Button>
+                    )}
+
+                    {game.status === gameStatuses.showAnswer && (
+                        <Button color="primary" variant="contained" onClick={handleShowLeaderBoard}>
                             Show Leaderboard
                         </Button>
                     )}
-                    {canAsk && (
-                        <Button color="primary" variant="contained" onClick={askQuestion}>
-                            Start Question
+
+                    {game.status === gameStatuses.showLeaderboard && (
+                        <Button color="primary" variant="contained" onClick={handleNextQuestion}>
+                            Next Question
                         </Button>
                     )}
+
+                    {game.status === gameStatuses.showLeaderboard ||
+                        (game.status === gameStatuses.lobbyClosed && (
+                            <Button color="primary" variant="contained" onClick={askQuestion}>
+                                Start Question
+                            </Button>
+                        ))}
                 </>
             )}
             {!nextQuestion() && (
@@ -114,25 +126,7 @@ const Manage = ({ quizId, gameId }) => {
             )}
 
             <div>
-                <h3>Players</h3>
-                {!players && <p>No players in yet</p>}
-                <ul>
-                    {players &&
-                        players
-                            .sort((a, b) => b.score - a.score)
-                            .map((player) => (
-                                <li
-                                    key={player.id}
-                                    style={{
-                                        color: playerHasAnsweredCurrentQuestion(player.id)
-                                            ? 'green'
-                                            : 'red',
-                                    }}
-                                >
-                                    {player.name} - {player.score}
-                                </li>
-                            ))}
-                </ul>
+                <PlayerManager game={game} players={players} />
             </div>
         </>
     );

@@ -16,6 +16,11 @@ if (!_firebase.apps.length) {
 }
 
 export const firebase = _firebase;
-
 export const db = _firebase.firestore();
+// if (process.env.NEXT_PUBLIC_ENV === 'dev') {
+//     db.settings({
+//         host: 'localhost:8080',
+//         ssl: false,
+//     });
+// }
 export const auth = _firebase.auth();

@@ -4,7 +4,7 @@ import '../styles/globals.css';
 import 'react-toastify/dist/ReactToastify.css';
 import { UserProvider } from '../src/helpers/UserContext';
 import { ToastContainer } from 'react-toastify';
-import { initLocalStorage } from '../src/api/localGameState';
+import { initLocalStorage } from '../src/helpers/localGameState';
 import { Page } from '../src/components/Page';
 
 export default function App({ Component, pageProps }) {

@@ -2,7 +2,7 @@ import { db } from '../config/firebase';
 import { useUser } from '../helpers/UserContext';
 import { batchUpdate, transformDoc, useRealtimeDoc } from './query';
 import { addPlayerToGame, getNewPlayer, playerRef, playersCollectionRef } from './players.api';
-import { getPlayerForLocalGame, setLocalGame } from './localGameState';
+import { getPlayerForLocalGame, setLocalGame } from '../helpers/localGameState';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import * as firebase from 'firebase';
@@ -12,17 +12,19 @@ export const gameRef = (id) => gameCollectionRef().doc(id);
 export const gameByPin = (pin) => gameCollectionRef().where('pin', '==', pin);
 
 export const gameStatuses = {
-    inProgress: 'IN_PROGRESS',
+    lobbyOpen: 'LOBBY_OPEN',
+    lobbyClosed: 'LOBBY_CLOSED',
+    answeringQuestion: 'ANSWERING_QUESTION',
+    allAnswered: 'ALL_ANSWERED',
+    showAnswer: 'SHOW_ANSWER',
+    showLeaderboard: 'SHOW_LEADERBOARD',
     ended: 'ENDED',
-    waiting: 'WAITING',
-    preQuestion: 'PRE_QUESTION',
-    inQuestion: 'QUESTION',
 };
 
 export const QUESTION_DURATION = 20000;
 
 export const getNewGame = (title, pin) => ({
-    status: gameStatuses.waiting,
+    status: gameStatuses.lobbyOpen,
     questionIndex: 0,
     currentQuestion: '',
     questionDuration: QUESTION_DURATION,
@@ -57,7 +59,7 @@ export const updateGame = async (id, data) => {
 };
 
 export const startGame = async (id) => {
-    await updateGame(id, { status: gameStatuses.inProgress, questionIndex: 0 });
+    await updateGame(id, { status: gameStatuses.lobbyClosed, questionIndex: 0 });
 };
 
 export const endGame = async (id) => {
@@ -137,12 +139,16 @@ export const joinGame = async (pin, name) => {
     if (getPlayerForLocalGame(game.id)) {
         throw new Error(`You have already joined this game`);
     }
-    if (game.status !== gameStatuses.waiting) {
+    if (game.status !== gameStatuses.lobbyOpen) {
         throw new Error('This game is not currently accepting new players');
     }
     const player = await addPlayerToGame(game.id, name);
     setLocalGame(game.id, player);
     return player;
+};
+
+export const setGameStatus = async (gameId, status) => {
+    await gameRef(gameId).update({ status });
 };
 
 export const setCurrentQuestion = async (id, currentQuestionId, currentQuestion, answers) => {
@@ -187,13 +193,20 @@ export const answerQuestion = async (
     return score;
 };
 
-export const moveToNextQuestion = async (gameId, currentIndex, players) => {
+export const showLeaderboard = async (gameId, players) => {
     const leaderboard = players
         .map(({ name, score }) => ({ name, score }))
         .sort((a, b) => b.score - a.score);
     await gameRef(gameId).update({
+        status: gameStatuses.showLeaderboard,
+        leaderboard,
+    });
+};
+
+export const moveToNextQuestion = async (gameId, currentIndex) => {
+    await gameRef(gameId).update({
+        status: gameStatuses.answeringQuestion,
         questionIndex: currentIndex + 1,
         showAnswers: true,
-        leaderboard,
     });
 };

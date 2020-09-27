@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import Button from '@material-ui/core/Button';
 import TimeRemaining from '../../Countdown';
 import Leaderboard from '../../Leaderboard';
 import {
-    addAnswerToLocalPlayer,
     getLocalQuestionTimer,
     hasPlayerAnsweredQuestion,
     setLocalQuestionTimer,
-} from '../../../api/localGameState';
-import { answerQuestion } from '../../../api/game.api';
+} from '../../../helpers/localGameState';
+import { gameStatuses } from '../../../api/game.api';
+import AnswerButtons from './AnswerButtons';
+import ShowAnswer from './ShowAnswer';
 
 const AnsweringQuestion = ({ game, player }) => {
     const [answers, setAnswers] = useState(null);
-    const [submittedAnswer, setSubmittedAnswer] = useState('');
     const [playerScore, setPlayerScore] = useState();
     const hasAnswered = () => hasPlayerAnsweredQuestion(game.id, game.currentQuestionId);
 
@@ -29,10 +28,14 @@ const AnsweringQuestion = ({ game, player }) => {
 
             setTimeout(() => {
                 if (!hasAnswered()) {
-                    handleSubmitAnswer('-1');
+                    //handleSubmitAnswer('-1');
+                    // TODO: Handle auto submit
                 }
             }, timeRemaining);
         }
+    }, [game.currentQuestion]);
+
+    useEffect(() => {
         if (game.answers) {
             setAnswers(
                 game.answers
@@ -40,28 +43,11 @@ const AnsweringQuestion = ({ game, player }) => {
                     .sort(() => Math.random() - 0.5),
             );
         }
-    }, [game.currentQuestion, game.answers]);
+    }, [game.answers]);
 
     useEffect(() => {
         setPlayerScore(player.score);
     }, [game.showAnswers]);
-
-    const handleSubmitAnswer = async (answerId) => {
-        setSubmittedAnswer(game.answers[answerId]);
-        if (!hasAnswered()) {
-            addAnswerToLocalPlayer(game.id, game.currentQuestionId, answerId);
-            const score = await answerQuestion(
-                game.id,
-                player.id,
-                game.currentQuestionId,
-                answerId,
-                getLocalQuestionTimer(game.id),
-                player.score,
-            );
-            setLocalQuestionTimer(game.id, null);
-            console.log(score);
-        }
-    };
 
     const correctAnswer = game.answers[0];
 
@@ -74,41 +60,38 @@ const AnsweringQuestion = ({ game, player }) => {
                 <>
                     <h2>{game.currentQuestion}</h2>
 
-                    {!game.showAnswers &&
-                        answers.map((answer) => (
-                            <Button
-                                style={{ margin: 16 }}
-                                variant={
-                                    hasAnswered() && submittedAnswer === answer.text
-                                        ? 'contained'
-                                        : 'outlined'
+                    {(game.status === gameStatuses.answeringQuestion ||
+                        game.status === gameStatuses.allAnswered) && (
+                        <AnswerButtons answers={answers} game={game} player={player} />
+                    )}
+
+                    {game.status === gameStatuses.showAnswer && (
+                        <>
+                            <ShowAnswer
+                                answers={answers}
+                                game={game}
+                                player={player}
+                                correctAnswer={correctAnswer}
+                            />
+                            <p>
+                                You scored:{' '}
+                                {
+                                    player.answers.find(
+                                        (i) => i.questionId === game.currentQuestionId,
+                                    )?.score
                                 }
-                                key={answer.id}
-                                disabled={hasAnswered()}
-                                onClick={() => {
-                                    handleSubmitAnswer(answer.id);
-                                }}
-                            >
-                                {answer.text}
-                            </Button>
-                        ))}
+                            </p>
+                        </>
+                    )}
                     {!hasAnswered() && (
                         <TimeRemaining
                             questionTime={game.questionDuration}
                             key={game.currentQuestionId}
                         />
                     )}
-                    {game.showAnswers && (
+                    {game.status === gameStatuses.showLeaderboard && (
                         <>
-                            <h3 style={{ color: 'green' }}>{correctAnswer}</h3>
-                            {correctAnswer !== submittedAnswer && (
-                                <h3 style={{ color: 'red' }}>{submittedAnswer}</h3>
-                            )}
-                            Score:{' '}
-                            {
-                                player.answers.find((i) => i.questionId === game.currentQuestionId)
-                                    ?.score
-                            }
+                            <p>Your score: {player.score}</p>
                             <Leaderboard leaderboard={game.leaderboard} player={player} />
                         </>
                     )}

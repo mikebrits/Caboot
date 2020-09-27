@@ -2,16 +2,19 @@ import Error from '../Error';
 import React from 'react';
 import { gameStatuses, useGameByPin } from '../../../api/game.api';
 import Spinner from '../../Spinner';
-import { getPlayerForLocalGame } from '../../../api/localGameState';
+import { getPlayerForLocalGame } from '../../../helpers/localGameState';
 import { useRouter } from 'next/router';
 import Ended from './Ended';
-import WaitingToStart from './WaitingToStart';
+import LobbyOpen from './LobbyOpen';
 import AnsweringQuestion from './AnsweringQuestion';
+import LobbyClosed from './LobbyClosed';
 
 const stateMap = {
     [gameStatuses.ended]: Ended,
-    [gameStatuses.waiting]: WaitingToStart,
-    [gameStatuses.inProgress]: AnsweringQuestion,
+    [gameStatuses.lobbyOpen]: LobbyOpen,
+    [gameStatuses.lobbyClosed]: LobbyClosed,
+    [gameStatuses.answeringQuestion]: AnsweringQuestion,
+    [gameStatuses.allAnswered]: AnsweringQuestion,
     default: AnsweringQuestion,
 };
 
