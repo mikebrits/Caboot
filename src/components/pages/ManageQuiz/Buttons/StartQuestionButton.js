@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import { setCurrentQuestion } from '../../../api/game.api';
+import { setCurrentQuestion } from '../../../../api/game.api';
 
 const StartQuestionButton = ({ game, nextQuestion }) => {
     const askQuestion = async () => {

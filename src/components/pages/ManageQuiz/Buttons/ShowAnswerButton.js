@@ -1,5 +1,5 @@
 import React from 'react';
-import { gameStatuses, setGameStatus } from '../../../api/game.api';
+import { gameStatuses, setGameStatus } from '../../../../api/game.api';
 import Button from '@material-ui/core/Button';
 
 const ShowAnswerButton = ({ game }) => {

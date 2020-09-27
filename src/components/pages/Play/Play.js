@@ -8,7 +8,7 @@ import Ended from './Ended';
 import LobbyOpen from './LobbyOpen';
 import AnsweringQuestion from './AnsweringQuestion';
 import LobbyClosed from './LobbyClosed';
-import Leaderboard from '../../Leaderboard';
+import Leaderboard from './Leaderboard';
 
 const stateMap = {
     [gameStatuses.ended]: Ended,

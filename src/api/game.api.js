@@ -64,6 +64,7 @@ export const startGame = async (id) => {
 };
 
 export const endGame = async (id) => {
+    console.log('here');
     await updateGame(id, { status: gameStatuses.ended });
 };
 

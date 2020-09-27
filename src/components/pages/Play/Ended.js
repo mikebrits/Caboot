@@ -1,10 +1,11 @@
 import React from 'react';
-import Leaderboard from '../../Leaderboard';
+import Leaderboard from './Leaderboard';
 
 const Ended = ({ game, player }) => {
     return (
         <>
-            <Leaderboard leaderboard={game.leaderboard} player={player} over={true} />
+            <h1>The game is over!</h1>
+            <Leaderboard game={game} player={player} />
         </>
     );
 };

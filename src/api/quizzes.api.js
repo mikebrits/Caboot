@@ -1,6 +1,6 @@
 import { useRealtimeCollection, useRealtimeDoc } from './query';
 import { useUser } from '../helpers/UserContext';
-import { gameRef, createGame, endGame } from './game.api';
+import { gameRef, createGame } from './game.api';
 import { playersCollectionRef } from './players.api';
 import { userRef } from './users.api';
 import { questionCollectionRef } from './questions.api';
@@ -69,7 +69,7 @@ export const useStartQuiz = () => {
 export const useStopQuiz = () => {
     const { user } = useUser();
     return async (quiz) => {
-        await endGame(quiz.game);
+        // await endGame(quiz.game);
         await quizRef(user.uid, quiz.id).update({
             status: QuizStatuses.idle,
             game: '',

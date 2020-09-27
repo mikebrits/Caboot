@@ -1,56 +1,22 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { requiresAuth } from '../../../helpers/withAuth';
-import { gameStatuses, resetCurrentQuiz, setGameStatus } from '../../../api/game.api';
+import { resetCurrentQuiz } from '../../../api/game.api';
 import Spinner from '../../Spinner';
 import { useManageQuiz } from '../../../api/quizzes.api';
 import Button from '@material-ui/core/Button';
 import Error from '../Error';
 import PlayerManager from './PlayerManager';
-import CloseLobbyButton from './CloseLobbyButton';
-import StartQuestionButton from './StartQuestionButton';
-import ShowLeaderboardButton from './ShowLeaderboardButton';
-import ShowAnswerButton from './ShowAnswerButton';
-import EndGameButton from './EndGameButton';
-
-const gameStateButtonMap = {
-    [gameStatuses.lobbyOpen]: CloseLobbyButton,
-    [gameStatuses.lobbyClosed]: StartQuestionButton,
-    [gameStatuses.allAnswered]: ShowAnswerButton,
-    [gameStatuses.showAnswer]: ShowLeaderboardButton,
-    [gameStatuses.showLeaderboard]: StartQuestionButton,
-    [gameStatuses.questionsFinished]: EndGameButton,
-    [gameStatuses.answeringQuestion]: () => <></>,
-    [gameStatuses.ended]: () => <></>,
-};
+import ActionButton from './Buttons/ActionButton';
+import { useManageAllQuestionsAnswered, useManageQuestionsFinished } from './ManageQuiz.hooks';
 
 const ManageQuiz = ({ quizId, gameId }) => {
     const [{ players, game, quiz, nextQuestion }, loading, error] = useManageQuiz(quizId, gameId);
-
-    useEffect(() => {
-        const allPlayersAnswered = players?.every((p) =>
-            p.answers.find((i) => i.questionId === game.currentQuestionId),
-        );
-        if (!loading && game.status === gameStatuses.answeringQuestion && allPlayersAnswered) {
-            setGameStatus(game.id, gameStatuses.allAnswered);
-        }
-    }, [loading, players]);
-
-    useEffect(() => {
-        if (
-            !loading &&
-            !nextQuestion &&
-            game.status === gameStatuses.showLeaderboard &&
-            game.status !== gameStatuses.ended
-        ) {
-            setGameStatus(game.id, gameStatuses.questionsFinished);
-        }
-    }, [nextQuestion, game?.status]);
+    useManageAllQuestionsAnswered({ players, loading, game });
+    useManageQuestionsFinished({ loading, nextQuestion, game });
 
     if (loading) return <Spinner />;
     if (error) return <Error title={'Error'} text={error} />;
-    if (quiz.game !== gameId) return <Error title={'Quizzes dont match'} />;
-
-    const ActionButton = gameStateButtonMap[game.status];
+    // if (quiz.game !== gameId) return <Error title={'Quizzes dont match'} />;
 
     return (
         <>
