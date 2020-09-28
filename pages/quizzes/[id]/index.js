@@ -38,7 +38,7 @@ function Quiz({ id }) {
     };
 
     const handleStartGame = () => {
-        startQuiz(id);
+        startQuiz(quiz);
     };
 
     if (loading || questionsLoading) return <Spinner />;
