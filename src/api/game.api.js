@@ -162,6 +162,7 @@ export const setCurrentQuestion = async (id, currentQuestionId, currentQuestion,
         currentQuestion,
         answers,
         questionDuration: QUESTION_DURATION,
+        startTime: time,
         deadline: time + QUESTION_DURATION + COUNTDOWN_DURATION,
         status: gameStatuses.answeringQuestion,
         currentQuestionStartedAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -174,25 +175,19 @@ export const resetCurrentQuiz = async (id, game) => {
     await batchUpdate(playersCollectionRef(id), blankPlayer);
 };
 
-export const answerQuestion = async (
-    gameId,
-    playerId,
-    questionId,
-    answerId,
-    timeStarted,
-    playerScore,
-) => {
+export const answerQuestion = async (game, player, answerId) => {
     const answerCorrect = answerId === '0';
     const timeFinished = await getTime();
-    const possibleScore = 6000 - (timeFinished - timeStarted);
+    const possibleScore = 8000 - (timeFinished - game.startTime);
     const adjustedScore = possibleScore > 1000 ? possibleScore : 1000;
     const score = answerCorrect ? adjustedScore : 0;
+    console.log(timeFinished, game.startTime, timeFinished - game.startTime);
 
-    const ref = playerRef(gameId, playerId);
+    const ref = playerRef(game.id, player.id);
     await ref.update({
-        score: playerScore + score,
+        score: player.score + score,
         answers: firebase.firestore.FieldValue.arrayUnion({
-            questionId,
+            questionId: game.currentQuestionId,
             answerId,
             score,
         }),

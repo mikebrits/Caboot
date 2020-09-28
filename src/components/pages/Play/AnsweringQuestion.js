@@ -1,42 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import TimeRemaining from '../../Countdown';
-import {
-    getLocalQuestionTimer,
-    hasPlayerAnsweredQuestion,
-    setLocalQuestionTimer,
-} from '../../../helpers/localGameState';
 import { gameStatuses } from '../../../api/game.api';
 import AnswerButtons from './AnswerButtons';
 import ShowAnswer from './ShowAnswer';
-import { hasPlayerAnsweredCurrentQuestion } from './Play.hooks';
+import { hasPlayerAnsweredCurrentQuestion, useCountdown } from './Play.hooks';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const AnsweringQuestion = ({ game, player }) => {
     const [answers, setAnswers] = useState(null);
-    const [playerScore, setPlayerScore] = useState();
-    const hasAnswered = () => hasPlayerAnsweredQuestion(game.id, game.currentQuestionId);
+
+    const countDownTime = useCountdown({ game });
 
     useEffect(() => {
-        if (game.currentQuestionId && !hasAnswered()) {
-            const time = new Date().getTime();
-            let timeRemaining = game.questionDuration;
-            const localTimer = getLocalQuestionTimer(game.id);
-            if (!localTimer) {
-                setLocalQuestionTimer(game.id, time);
-            } else {
-                timeRemaining = game.questionDuration - (time - localTimer);
-            }
-
-            setTimeout(() => {
-                if (!hasAnswered()) {
-                    //handleSubmitAnswer('-1');
-                    // TODO: Handle auto submit
-                }
-            }, timeRemaining);
-        }
-    }, [game.currentQuestion]);
-
-    useEffect(() => {
-        console.log({ game });
         if (game.answers) {
             setAnswers(
                 game.answers
@@ -46,19 +21,28 @@ const AnsweringQuestion = ({ game, player }) => {
         }
     }, [game.answers]);
 
-    useEffect(() => {
-        setPlayerScore(player.score);
-    }, [game.showAnswers]);
-
     const correctAnswer = game.answers[0];
+
+    if (countDownTime > 0 && game.status === gameStatuses.answeringQuestion)
+        return (
+            <>
+                <CircularProgress variant="static" value={(countDownTime / 3000) * 100} />
+                <h2>Get Ready!</h2>
+            </>
+        );
+
+    const showTimer = !hasPlayerAnsweredCurrentQuestion(player, game);
 
     return (
         <>
-            <h1>{game.title}</h1>
-            <p>Your Score is: {playerScore}</p>
-
             {game.currentQuestion && (
                 <>
+                    {showTimer && (
+                        <TimeRemaining
+                            questionTime={game.questionDuration}
+                            key={game.currentQuestionId}
+                        />
+                    )}
                     <h2>{game.currentQuestion}</h2>
 
                     {(game.status === gameStatuses.answeringQuestion ||
@@ -92,13 +76,6 @@ const AnsweringQuestion = ({ game, player }) => {
                             </p>
                         </>
                     )}
-                    {!hasAnswered() ||
-                        (game?.status === gameStatuses.answeringQuestion && (
-                            <TimeRemaining
-                                questionTime={game.questionDuration}
-                                key={game.currentQuestionId}
-                            />
-                        ))}
                 </>
             )}
         </>

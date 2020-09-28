@@ -4,7 +4,6 @@ import { usePlayerCurrentAnswer } from '../../../api/players.api';
 
 const ShowAnswer = ({ answers, correctAnswer, game, player }) => {
     const [answer] = usePlayerCurrentAnswer(game, player);
-    console.log({ answer, correctAnswer });
     return (
         <>
             {answers?.map(({ id, text }) => {
@@ -18,7 +17,7 @@ const ShowAnswer = ({ answers, correctAnswer, game, player }) => {
                         variant={isContained ? 'contained' : 'outlined'}
                         key={id}
                     >
-                        {text}
+                        {correctAnswer === text && <>✅</>} {text}
                     </Button>
                 );
             })}

@@ -1,5 +1,5 @@
 import Error from '../Error';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { gameStatuses, useGameByPin } from '../../../api/game.api';
 import Spinner from '../../Spinner';
 import { getPlayerForLocalGame } from '../../../helpers/localGameState';
@@ -25,7 +25,14 @@ const stateMap = {
 const Play = ({ pin }) => {
     const [{ player, game }, loading, error] = useGameByPin(pin);
     useManageAutoAnswer({ game, player, loading });
+    const [playerScore, setPlayerScore] = useState(0);
     const router = useRouter();
+
+    useEffect(() => {
+        if (game.status === gameStatuses.showAnswer) {
+            setPlayerScore(player.score);
+        }
+    }, [game?.status]);
 
     if (error) {
         return <Error title={'There was an error loading your game'} text={error.toString()} />;
@@ -41,7 +48,26 @@ const Play = ({ pin }) => {
 
     const GameState = stateMap[game.status] || stateMap.default;
 
-    return <GameState game={game} player={player} />;
+    return (
+        <>
+            <p>
+                <b>{player?.name}</b>: {playerScore}
+            </p>
+            <div
+                style={{
+                    display: 'flex',
+                    height: '90vh',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    textAlign: 'center',
+                }}
+            >
+                <div style={{ flex: '0 1 auto' }}>
+                    <GameState game={game} player={player} />
+                </div>
+            </div>
+        </>
+    );
 };
 
 export default Play;

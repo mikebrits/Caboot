@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-    addAnswerToLocalPlayer,
-    getLocalQuestionTimer,
-    setLocalQuestionTimer,
-} from '../../../helpers/localGameState';
+import { addAnswerToLocalPlayer, setLocalQuestionTimer } from '../../../helpers/localGameState';
 import { answerQuestion } from '../../../api/game.api';
 import Button from '@material-ui/core/Button';
 import { usePlayerCurrentAnswer } from '../../../api/players.api';
@@ -18,14 +14,7 @@ const AnswerButtons = ({ onSubmitAnswer = () => {}, answers, game, player, disab
         setAnswer(answerId);
         if (!hasAnswered()) {
             addAnswerToLocalPlayer(game.id, game.currentQuestionId, answerId);
-            await answerQuestion(
-                game.id,
-                player.id,
-                game.currentQuestionId,
-                answerId,
-                getLocalQuestionTimer(game.id),
-                player.score,
-            );
+            await answerQuestion(game, player, answerId);
             setLocalQuestionTimer(game.id, null);
         }
     };
