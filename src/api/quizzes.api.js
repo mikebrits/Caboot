@@ -5,7 +5,7 @@ import { playersCollectionRef } from './players.api';
 import { userRef } from './users.api';
 import { questionCollectionRef } from './questions.api';
 
-export const QuizStatuses = {
+export const quizStatuses = {
     idle: 'IDLE',
     waiting: 'WAITING',
     inProgress: 'IN_PROGRESS',
@@ -38,7 +38,7 @@ export const useUpdateQuestionOrder = (quizId) => {
 export const useCreateQuiz = () => {
     const { user } = useUser();
     return async (title) => {
-        const quiz = { title, status: QuizStatuses.idle, questionOrder: [] };
+        const quiz = { title, status: quizStatuses.idle, questionOrder: [] };
         const doc = await quizCollectionRef(user.uid).add(quiz);
         return { id: doc.uid, ...quiz };
     };
@@ -61,7 +61,7 @@ export const useStartQuiz = () => {
         });
         await quizRef(user.uid, quiz.id).update({
             game: game.id,
-            status: QuizStatuses.waiting,
+            status: quizStatuses.waiting,
         });
     };
 };
@@ -71,7 +71,7 @@ export const useStopQuiz = () => {
     return async (quiz) => {
         // await endGame(quiz.game);
         await quizRef(user.uid, quiz.id).update({
-            status: QuizStatuses.idle,
+            status: quizStatuses.idle,
             game: '',
         });
     };

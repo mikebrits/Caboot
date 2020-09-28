@@ -1,14 +1,13 @@
 import React from 'react';
 import { requiresAuth } from '../../../src/helpers/withAuth';
-import { useDeleteQuiz, useQuiz } from '../../../src/api/quizzes.api';
+import { quizStatuses, useDeleteQuiz, useQuiz, useStartQuiz } from '../../../src/api/quizzes.api';
 import Spinner from '../../../src/components/Spinner';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Button from '@material-ui/core/Button';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import List from '@material-ui/core/List';
 import QuestionListItem from '../../../src/components/QuestionListItem';
-import { BsPencil, BsPlay, BsTrash } from 'react-icons/bs/index';
+import { BsPencil, BsPlay, BsTrash, BsGear } from 'react-icons/bs/index';
 import Error from '../../../src/components/pages/Error';
 import { useQuestions } from '../../../src/api/questions.api';
 
@@ -31,10 +30,15 @@ function Quiz({ id }) {
     const classes = useStyles();
     const deleteQuiz = useDeleteQuiz();
     const router = useRouter();
+    const startQuiz = useStartQuiz();
+
     const handleDelete = async () => {
-        console.log({ id });
         await deleteQuiz(id);
         await router.push('/quizzes');
+    };
+
+    const handleStartGame = () => {
+        startQuiz(id);
     };
 
     if (loading || questionsLoading) return <Spinner />;
@@ -46,14 +50,41 @@ function Quiz({ id }) {
             <div className={classes.header}>
                 <h1>{quiz.title}</h1>
                 <div className={classes.root}>
-                    <Button variant="contained" startIcon={<BsPlay />} color="primary">
-                        Start
-                    </Button>
-                    <Link href={`/quizzes/${id}/edit`}>
-                        <Button startIcon={<BsPencil />} variant="outlined" color="primary">
-                            Edit
+                    {quiz.status === quizStatuses.idle && (
+                        <Button
+                            onClick={handleStartGame}
+                            variant="contained"
+                            startIcon={<BsPlay />}
+                            color="primary"
+                        >
+                            Start
                         </Button>
-                    </Link>
+                    )}
+                    {quiz.status === quizStatuses.inProgress ||
+                        (quiz.status === quizStatuses.waiting && (
+                            <Button
+                                onClick={() => {
+                                    router.push(`/quizzes/${id}/manage/${quiz.game}`);
+                                }}
+                                variant="contained"
+                                startIcon={<BsGear />}
+                                color="primary"
+                            >
+                                Manage
+                            </Button>
+                        ))}
+
+                    <Button
+                        onClick={() => {
+                            router.push(`/quizzes/${id}/edit`);
+                        }}
+                        startIcon={<BsPencil />}
+                        variant="outlined"
+                        color="primary"
+                    >
+                        Edit
+                    </Button>
+
                     <Button
                         startIcon={<BsTrash />}
                         variant="outlined"
