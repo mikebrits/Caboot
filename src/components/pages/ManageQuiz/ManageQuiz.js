@@ -8,6 +8,7 @@ import Error from '../Error';
 import PlayerManager from './PlayerManager';
 import ActionButton from './Buttons/ActionButton';
 import { useManageAllQuestionsAnswered, useManageQuestionsFinished } from './ManageQuiz.hooks';
+import GameLink from './GameLink';
 
 const ManageQuiz = ({ quizId, gameId }) => {
     const [{ players, game, quiz, nextQuestion }, loading, error] = useManageQuiz(quizId, gameId);
@@ -31,7 +32,9 @@ const ManageQuiz = ({ quizId, gameId }) => {
 
             <p>Current State: {game.status}</p>
 
-            <p>Game link: https://caboot-zeta.vercel.app/play/{game.pin}</p>
+            <p>
+                Game link: <GameLink pin={game.pin} />
+            </p>
             {nextQuestion ? (
                 <>
                     <h3>Next Question:</h3>
