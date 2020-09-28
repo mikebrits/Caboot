@@ -19,7 +19,7 @@ const AnsweringQuestion = ({ game, player }) => {
                     .sort(() => Math.random() - 0.5),
             );
         }
-    }, [game.answers]);
+    }, [game.currentQuestionId]);
 
     const correctAnswer = game.answers[0];
 
