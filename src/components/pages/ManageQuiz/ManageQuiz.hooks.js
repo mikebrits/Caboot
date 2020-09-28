@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { gameStatuses, setGameStatus } from '../../../api/game.api';
-import { getTime } from '../../../api/time.api';
+import { useDeadline } from '../../../helpers/deadlineHooks';
 
 export const useManageAllQuestionsAnswered = ({ players, loading, game }) => {
     useEffect(() => {
@@ -16,27 +16,13 @@ export const useManageAllQuestionsAnswered = ({ players, loading, game }) => {
 };
 
 export const useManageQuestionDeadline = ({ loading, game }) => {
-    const [timer, setTimer] = useState(null);
-    useEffect(() => {
-        if (!loading && game?.status === gameStatuses.answeringQuestion) {
-            getTime().then((time) => {
-                const remaining = game.deadline - time;
-                if (remaining > 0) {
-                    console.log('Timer running', remaining);
-                    setTimer(
-                        setTimeout(async () => {
-                            await setGameStatus(game.id, gameStatuses.allAnswered);
-                        }, remaining),
-                    );
-                } else {
-                    setGameStatus(game.id, gameStatuses.allAnswered);
-                }
-            });
-        }
-        if (!loading && game?.status === gameStatuses.allAnswered) {
-            clearTimeout(timer);
-        }
-    }, [loading, game?.status]);
+    useDeadline({
+        loading,
+        game,
+        onExpire: async () => {
+            await setGameStatus(game.id, gameStatuses.allAnswered);
+        },
+    });
 };
 
 export const useManageQuestionsFinished = ({ loading, nextQuestion, game }) => {

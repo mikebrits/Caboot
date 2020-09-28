@@ -9,6 +9,7 @@ import LobbyOpen from './LobbyOpen';
 import AnsweringQuestion from './AnsweringQuestion';
 import LobbyClosed from './LobbyClosed';
 import Leaderboard from './Leaderboard';
+import { useManageAutoAnswer } from './Play.hooks';
 
 const stateMap = {
     [gameStatuses.ended]: Ended,
@@ -23,6 +24,7 @@ const stateMap = {
 
 const Play = ({ pin }) => {
     const [{ player, game }, loading, error] = useGameByPin(pin);
+    useManageAutoAnswer({ game, player, loading });
     const router = useRouter();
 
     if (error) {

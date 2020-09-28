@@ -8,6 +8,7 @@ import {
 import { gameStatuses } from '../../../api/game.api';
 import AnswerButtons from './AnswerButtons';
 import ShowAnswer from './ShowAnswer';
+import { hasPlayerAnsweredCurrentQuestion } from './Play.hooks';
 
 const AnsweringQuestion = ({ game, player }) => {
     const [answers, setAnswers] = useState(null);
@@ -62,7 +63,15 @@ const AnsweringQuestion = ({ game, player }) => {
 
                     {(game.status === gameStatuses.answeringQuestion ||
                         game.status === gameStatuses.allAnswered) && (
-                        <AnswerButtons answers={answers} game={game} player={player} />
+                        <AnswerButtons
+                            answers={answers}
+                            game={game}
+                            player={player}
+                            disabled={
+                                game.status === gameStatuses.allAnswered ||
+                                hasPlayerAnsweredCurrentQuestion(player, game)
+                            }
+                        />
                     )}
 
                     {game.status === gameStatuses.showAnswer && (
@@ -83,12 +92,13 @@ const AnsweringQuestion = ({ game, player }) => {
                             </p>
                         </>
                     )}
-                    {!hasAnswered() && (
-                        <TimeRemaining
-                            questionTime={game.questionDuration}
-                            key={game.currentQuestionId}
-                        />
-                    )}
+                    {!hasAnswered() ||
+                        (game?.status === gameStatuses.answeringQuestion && (
+                            <TimeRemaining
+                                questionTime={game.questionDuration}
+                                key={game.currentQuestionId}
+                            />
+                        ))}
                 </>
             )}
         </>

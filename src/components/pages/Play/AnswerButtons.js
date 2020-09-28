@@ -2,15 +2,15 @@ import React from 'react';
 import {
     addAnswerToLocalPlayer,
     getLocalQuestionTimer,
-    hasPlayerAnsweredQuestion,
     setLocalQuestionTimer,
 } from '../../../helpers/localGameState';
 import { answerQuestion } from '../../../api/game.api';
 import Button from '@material-ui/core/Button';
 import { usePlayerCurrentAnswer } from '../../../api/players.api';
+import { hasPlayerAnsweredCurrentQuestion } from './Play.hooks';
 
-const AnswerButtons = ({ onSubmitAnswer = () => {}, answers, game, player }) => {
-    const hasAnswered = () => hasPlayerAnsweredQuestion(game.id, game.currentQuestionId);
+const AnswerButtons = ({ onSubmitAnswer = () => {}, answers, game, player, disabled }) => {
+    const hasAnswered = () => hasPlayerAnsweredCurrentQuestion(player, game);
     const [answer, setAnswer] = usePlayerCurrentAnswer(game, player);
 
     const handleSubmitAnswer = async (answerId) => {
@@ -18,7 +18,7 @@ const AnswerButtons = ({ onSubmitAnswer = () => {}, answers, game, player }) => 
         setAnswer(answerId);
         if (!hasAnswered()) {
             addAnswerToLocalPlayer(game.id, game.currentQuestionId, answerId);
-            const score = await answerQuestion(
+            await answerQuestion(
                 game.id,
                 player.id,
                 game.currentQuestionId,
@@ -27,25 +27,19 @@ const AnswerButtons = ({ onSubmitAnswer = () => {}, answers, game, player }) => 
                 player.score,
             );
             setLocalQuestionTimer(game.id, null);
-            console.log(score);
         }
     };
-    console.log({ answer });
     return (
         <>
             {answers?.map(({ id, text }) => (
                 <Button
                     style={{ margin: 16 }}
                     variant={
-                        !hasAnswered()
-                            ? 'contained'
-                            : answer?.answerId === id
-                            ? 'contained'
-                            : 'outlined'
+                        !disabled ? 'contained' : answer?.answerId === id ? 'contained' : 'outlined'
                     }
                     key={id}
                     color={'primary'}
-                    disabled={hasAnswered()}
+                    disabled={disabled}
                     onClick={async () => {
                         await handleSubmitAnswer(id);
                     }}

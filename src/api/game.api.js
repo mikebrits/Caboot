@@ -183,8 +183,8 @@ export const answerQuestion = async (
     playerScore,
 ) => {
     const answerCorrect = answerId === '0';
-    const timeFinished = new Date().getTime();
-    const possibleScore = 5000 - (timeFinished - timeStarted);
+    const timeFinished = await getTime();
+    const possibleScore = 6000 - (timeFinished - timeStarted);
     const adjustedScore = possibleScore > 1000 ? possibleScore : 1000;
     const score = answerCorrect ? adjustedScore : 0;
 
