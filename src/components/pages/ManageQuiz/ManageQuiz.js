@@ -7,17 +7,21 @@ import Button from '@material-ui/core/Button';
 import Error from '../Error';
 import PlayerManager from './PlayerManager';
 import ActionButton from './Buttons/ActionButton';
-import { useManageAllQuestionsAnswered, useManageQuestionsFinished } from './ManageQuiz.hooks';
+import {
+    useManageAllQuestionsAnswered,
+    useManageQuestionDeadline,
+    useManageQuestionsFinished,
+} from './ManageQuiz.hooks';
 import GameLink from './GameLink';
 
 const ManageQuiz = ({ quizId, gameId }) => {
     const [{ players, game, quiz, nextQuestion }, loading, error] = useManageQuiz(quizId, gameId);
     useManageAllQuestionsAnswered({ players, loading, game });
     useManageQuestionsFinished({ loading, nextQuestion, game });
+    useManageQuestionDeadline({ loading, game });
 
     if (loading) return <Spinner />;
     if (error) return <Error title={'Error'} text={error} />;
-    // if (quiz.game !== gameId) return <Error title={'Quizzes dont match'} />;
 
     return (
         <>

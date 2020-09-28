@@ -6,6 +6,7 @@ import { getPlayerForLocalGame, setLocalGame } from '../helpers/localGameState';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import * as firebase from 'firebase';
+import { getTime } from './time.api';
 
 export const gameCollectionRef = () => db.collection('active-quizzes');
 export const gameRef = (id) => gameCollectionRef().doc(id);
@@ -23,6 +24,7 @@ export const gameStatuses = {
 };
 
 export const QUESTION_DURATION = 20000;
+export const COUNTDOWN_DURATION = 3000;
 
 export const getNewGame = (title, pin) => ({
     status: gameStatuses.lobbyOpen,
@@ -154,10 +156,13 @@ export const setGameStatus = async (gameId, status) => {
 };
 
 export const setCurrentQuestion = async (id, currentQuestionId, currentQuestion, answers) => {
+    const time = await getTime();
     await gameRef(id).update({
         currentQuestionId,
         currentQuestion,
         answers,
+        questionDuration: QUESTION_DURATION,
+        deadline: time + QUESTION_DURATION + COUNTDOWN_DURATION,
         status: gameStatuses.answeringQuestion,
         currentQuestionStartedAt: firebase.firestore.FieldValue.serverTimestamp(),
     });
