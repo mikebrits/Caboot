@@ -56,10 +56,11 @@ const Play = ({ pin }) => {
             <div
                 style={{
                     display: 'flex',
-                    height: '90vh',
+                    height: '75vh',
                     alignItems: 'center',
                     justifyContent: 'center',
                     textAlign: 'center',
+                    // background: 'pink',
                 }}
             >
                 <div style={{ flex: '0 1 auto' }}>

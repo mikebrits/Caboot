@@ -17,7 +17,7 @@ const ShowAnswer = ({ answers, correctAnswer, game, player }) => {
                         variant={isContained ? 'contained' : 'outlined'}
                         key={id}
                     >
-                        {correctAnswer === text && <>✅</>} {text}
+                        {correctAnswer === text && '✅  '} {text}
                     </Button>
                 );
             })}
