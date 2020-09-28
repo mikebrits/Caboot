@@ -181,7 +181,6 @@ export const answerQuestion = async (game, player, answerId) => {
     const possibleScore = 8000 - (timeFinished - game.startTime);
     const adjustedScore = possibleScore > 1000 ? possibleScore : 1000;
     const score = answerCorrect ? adjustedScore : 0;
-    console.log(timeFinished, game.startTime, timeFinished - game.startTime);
 
     const ref = playerRef(game.id, player.id);
     await ref.update({

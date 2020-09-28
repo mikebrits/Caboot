@@ -42,6 +42,7 @@ function Quiz({ id }) {
         await saveQuestions(editQuestions);
         if (order) {
             await updateOrder(order);
+            setOrder(null);
         }
         setEditQuestions([]);
         toast.success('Quiz Saved');
@@ -66,6 +67,7 @@ function Quiz({ id }) {
     const filteredQuestions = questions.map((question) => {
         return editQuestions.find((i) => i.id === question.id) || question;
     });
+    console.log({ order });
 
     return (
         <>
@@ -91,7 +93,7 @@ function Quiz({ id }) {
             </div>
             <hr />
             <Button
-                disabled={editQuestions.length === 0}
+                disabled={editQuestions.length === 0 && !order}
                 variant="contained"
                 color="primary"
                 onClick={handleSave}
