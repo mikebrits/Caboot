@@ -178,13 +178,14 @@ export const resetCurrentQuiz = async (id, game) => {
 export const answerQuestion = async (game, player, answerId) => {
     const answerCorrect = answerId === '0';
     const timeFinished = await getTime();
-    const possibleScore = 8000 - (timeFinished - game.startTime);
+    const possibleScore = 10000 - (timeFinished - game.startTime);
     const adjustedScore = possibleScore > 1000 ? possibleScore : 1000;
     const score = answerCorrect ? adjustedScore : 0;
 
     const ref = playerRef(game.id, player.id);
     await ref.update({
         score: player.score + score,
+        streak: score > 0 ? player.streak + 1 : 0,
         answers: firebase.firestore.FieldValue.arrayUnion({
             questionId: game.currentQuestionId,
             answerId,
@@ -196,11 +197,12 @@ export const answerQuestion = async (game, player, answerId) => {
 
 export const showLeaderboard = async (game, players) => {
     const leaderboard = players
-        .map(({ name, score }) => ({ name, score }))
+        .map(({ name, score, streak }) => ({ name, score, streak }))
         .sort((a, b) => b.score - a.score);
     await gameRef(game.id).update({
         status: gameStatuses.showLeaderboard,
         questionIndex: game.questionIndex + 1,
+        previousLeaderboard: game.leaderboard || null,
         leaderboard,
     });
 };

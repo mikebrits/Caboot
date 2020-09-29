@@ -28,6 +28,8 @@ const Play = ({ pin }) => {
     const [playerScore, setPlayerScore] = useState(0);
     const router = useRouter();
 
+    console.log({game});
+
     useEffect(() => {
         if (game.status === gameStatuses.showAnswer) {
             setPlayerScore(player.score);
