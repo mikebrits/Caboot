@@ -178,7 +178,7 @@ export const resetCurrentQuiz = async (id, game) => {
 export const answerQuestion = async (game, player, answerId) => {
     const answerCorrect = answerId === '0';
     const timeFinished = await getTime();
-    const possibleScore = 10000 - (timeFinished - game.startTime);
+    const possibleScore = 9000 - (timeFinished - game.startTime);
     const adjustedScore = possibleScore > 1000 ? possibleScore : 1000;
     const score = answerCorrect ? adjustedScore : 0;
 

@@ -30,7 +30,8 @@ const PlayerManager = ({ game, players }) => {
                                         : 'red',
                                 }}
                             >
-                                {player.name} - {player.score}{' '}
+                                {player.streak >= 3 && <b>🔥 {player.streak}</b>} {player.name} -{' '}
+                                {player.score}
                                 <button onClick={() => handleKick(player.id)}>Kick</button>
                             </li>
                         ))}

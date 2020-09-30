@@ -10,6 +10,7 @@ import AnsweringQuestion from './AnsweringQuestion';
 import LobbyClosed from './LobbyClosed';
 import Leaderboard from './Leaderboard';
 import { useManageAutoAnswer } from './Play.hooks';
+import Confetti from 'react-confetti';
 
 const stateMap = {
     [gameStatuses.ended]: Ended,
@@ -26,9 +27,19 @@ const Play = ({ pin }) => {
     const [{ player, game }, loading, error] = useGameByPin(pin);
     useManageAutoAnswer({ game, player, loading });
     const [playerScore, setPlayerScore] = useState(0);
+    const [confettiPieces, setConfettiPieces] = useState(0);
     const router = useRouter();
 
-    console.log({game});
+    const celebrate = () => {
+        console.log('Confett');
+        setConfettiPieces(200);
+        const timeout = setTimeout(() => {
+            setConfettiPieces(0);
+        }, 3000);
+        return () => clearTimeout(timeout);
+    };
+
+    console.log({ game });
 
     useEffect(() => {
         if (game.status === gameStatuses.showAnswer) {
@@ -66,8 +77,13 @@ const Play = ({ pin }) => {
                 }}
             >
                 <div style={{ flex: '0 1 auto' }}>
-                    <GameState game={game} player={player} />
+                    <GameState game={game} player={player} onCorrectAnswer={celebrate} />
                 </div>
+                <Confetti
+                    width={window.innerWidth}
+                    height={window.innerHeight}
+                    numberOfPieces={confettiPieces}
+                />
             </div>
         </>
     );

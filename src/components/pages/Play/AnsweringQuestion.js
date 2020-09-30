@@ -6,7 +6,7 @@ import ShowAnswer from './ShowAnswer';
 import { hasPlayerAnsweredCurrentQuestion, useCountdown } from './Play.hooks';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-const AnsweringQuestion = ({ game, player }) => {
+const AnsweringQuestion = ({ game, player, onCorrectAnswer }) => {
     const [answers, setAnswers] = useState(null);
 
     const countDownTime = useCountdown({ game });
@@ -65,6 +65,7 @@ const AnsweringQuestion = ({ game, player }) => {
                                 game={game}
                                 player={player}
                                 correctAnswer={correctAnswer}
+                                onCorrectAnswer={onCorrectAnswer}
                             />
                             <p>
                                 You scored:{' '}

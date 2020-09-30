@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import { usePlayerCurrentAnswer } from '../../../api/players.api';
 
-const ShowAnswer = ({ answers, correctAnswer, game, player }) => {
+const ShowAnswer = ({ answers, correctAnswer, game, player, onCorrectAnswer }) => {
     const [answer] = usePlayerCurrentAnswer(game, player);
+    useEffect(() => {
+        if (answer.answerId === '0') {
+            onCorrectAnswer();
+        }
+    }, [answer]);
     return (
         <>
             {answers?.map(({ id, text }) => {
