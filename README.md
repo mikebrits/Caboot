@@ -1,6 +1,6 @@
 # Welcome to Caboot!
 
-A multiplayer quiz game that simualtes Kahoot. This was made in like 2 weeks after hours.
+A multiplayer quiz game that simulates Kahoot. This was made in like 2 weeks after hours.
 
 ## What it does
 - Provides authentication for people who want to create Quizzes (account approval is a manual process)
